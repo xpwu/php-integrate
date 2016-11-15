@@ -1,0 +1,32 @@
+<?php
+
+
+$sub_DIRS = [];
+
+$common_FILES = [
+  'AutoChecker.inc'
+  , 'Integrater.inc'
+  , 'Log.inc'
+  , 'Main.php'
+  , 'MkFileReader.inc'
+  , 'Utils.inc'
+  , '*.inc' //only use in protobuffer
+];
+
+$development_FILES = [];
+
+$production_FILES = [];
+
+$require_once_FILES = [];
+
+$web_INDEX = '';
+
+$classLoader = [];
+
+$test_INDEX = '';
+
+$common_NOT_CHECK_FILES = [];
+
+$require_once_FILES = [];
+
+
