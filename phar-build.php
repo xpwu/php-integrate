@@ -17,7 +17,7 @@ $files = [
 ];
 
 if (Phar::canWrite()) {
-  $ph = new Phar("inte.phar");
+  $ph = new Phar("pinte.phar");
   $ph->startBuffering();
   foreach ($files as $value) {
     $ph[$value] = file_get_contents($value);

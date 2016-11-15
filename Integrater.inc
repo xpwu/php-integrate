@@ -14,7 +14,6 @@ require_once ("MkFileReader.inc");
 
 class Integrater {
   function __construct($mode, $topDir) {
-    // TODO: Implement __construct() method.
     $this->mode_ = $mode;
     $this->topDir_ = $topDir;
   }
@@ -26,7 +25,7 @@ class Integrater {
       return false;
     }
 
-    $autock = new AutoChecker($mk, $this->mode_);
+    $autock = new AutoChecker($mk);
     Log::debug_dump($autock);
     if (!$autock->check()) {
       return false;
@@ -48,7 +47,7 @@ class Integrater {
 
     if (!self::checkDestinationDirAndMk($this->allfiles_, $desTopDir)
       || !self::copyFileTo($this->allfiles_, $desTopDir)
-      || !self::copyFileTo(Utils::$webIndex_, $desTopDir)) {
+      || !self::copyFileTo(Utils::$index, $desTopDir)) {
       return false;
     }
 
@@ -87,8 +86,8 @@ class Integrater {
   Phar::mapPhar();
   set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
   require_once("phar://$pharName.phar/AutoLoad.inc");
-  zxg_AutoLoader::run();
-  zxg_AutoLoader::\$prefix = "phar://$pharName.phar";
+  inte_AutoLoader::run();
+  inte_AutoLoader::\$prefix = "phar://$pharName.phar";
   $requireOnceFiles
   require_once("phar://$pharName.phar/webIndex.php");
   __HALT_COMPILER(); ?>
@@ -102,57 +101,57 @@ EOF;
     return true;
   }
 
-  public function pharForTest($pharPath) {
-    $pharPath = $pharPath . '_test';
-    $pharName = basename($pharPath);
-    if (Phar::canWrite()) {
-      $ph = new Phar("$pharPath.phar"
-        , FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::KEY_AS_FILENAME
-        , $pharName);
-      $ph->startBuffering();
-      foreach ($this->allfiles_ as $key=>$value) {
-        if (substr($value, 0, 2) === './') {
-          $value = substr($value, 2);
-        }
-        $ph[$value] = file_get_contents($key);
-      }
-      $filename = array_keys($this->autoload_)[0];
-      $ph['AutoLoad.inc'] = $this->autoload_[$filename];
-      $fl = array_keys(Utils::$webIndex_)[0];
-      if (count(Utils::$testIndex_) != 0) {
-        $ph['testIndex.php'] = file_get_contents($fl);
-      } else {
-        $ph['testIndex.php'] = '<?php ';
-      }
-
-      $requireOnceFiles = '';
-      foreach (Utils::$requireOnceFiles as $file) {
-        $rf = "phar://$pharName.phar/".$file;
-        $requireOnceFiles .= "\n  require_once(\"$rf\");";
-      }
-
-      $ph->stopBuffering();
-      $stub = <<<EOF
-<?php
-  date_default_timezone_set('PRC');
-  Phar::interceptFileFuncs();
-  Phar::mapPhar();
-  set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-  require_once("phar://$pharName.phar/AutoLoad.inc");
-  zxg_AutoLoader::run();
-  zxg_AutoLoader::\$prefix = "phar://$pharName.phar";
-   $requireOnceFiles
-  require_once("phar://$pharName.phar/testIndex.php");
-  __HALT_COMPILER(); ?>
-EOF;
-
-      $ph->setStub($stub);
-    } else {
-      echo "phar can not write!\n";
-      return false;
-    }
-    return true;
-  }
+//  public function pharForTest($pharPath) {
+//    $pharPath = $pharPath . '_test';
+//    $pharName = basename($pharPath);
+//    if (Phar::canWrite()) {
+//      $ph = new Phar("$pharPath.phar"
+//        , FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::KEY_AS_FILENAME
+//        , $pharName);
+//      $ph->startBuffering();
+//      foreach ($this->allfiles_ as $key=>$value) {
+//        if (substr($value, 0, 2) === './') {
+//          $value = substr($value, 2);
+//        }
+//        $ph[$value] = file_get_contents($key);
+//      }
+//      $filename = array_keys($this->autoload_)[0];
+//      $ph['AutoLoad.inc'] = $this->autoload_[$filename];
+//      $fl = array_keys(Utils::$webIndex_)[0];
+//      if (count(Utils::$testIndex_) != 0) {
+//        $ph['testIndex.php'] = file_get_contents($fl);
+//      } else {
+//        $ph['testIndex.php'] = '<?php ';
+//      }
+//
+//      $requireOnceFiles = '';
+//      foreach (Utils::$requireOnceFiles as $file) {
+//        $rf = "phar://$pharName.phar/".$file;
+//        $requireOnceFiles .= "\n  require_once(\"$rf\");";
+//      }
+//
+//      $ph->stopBuffering();
+//      $stub = <<<EOF
+//<?php
+//  date_default_timezone_set('PRC');
+//  Phar::interceptFileFuncs();
+//  Phar::mapPhar();
+//  set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
+//  require_once("phar://$pharName.phar/AutoLoad.inc");
+//  zxg_AutoLoader::run();
+//  zxg_AutoLoader::\$prefix = "phar://$pharName.phar";
+//   $requireOnceFiles
+//  require_once("phar://$pharName.phar/testIndex.php");
+//  __HALT_COMPILER(); ? >
+//EOF;
+//
+//      $ph->setStub($stub);
+//    } else {
+//      echo "phar can not write!\n";
+//      return false;
+//    }
+//    return true;
+//  }
 
   static private function checkDestinationDirAndMk(array $files, $desTopDir) {
     if (file_exists($desTopDir)) {
@@ -164,7 +163,7 @@ EOF;
       Log::error("mkdir $desTopDir failed!");
       return false;
     }
-    log::debug("\$desTopDir = ".$desTopDir);
+    Log::debug("\$desTopDir = ".$desTopDir);
     foreach ($files as $src => $des) {
       $desdir = $desTopDir.'/'.$des;
       if (0!==substr_compare($desdir, $desTopDir, 0, strlen($desTopDir))) {

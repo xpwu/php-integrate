@@ -27,8 +27,9 @@ class Utils {
     rmdir($dir);
   }
 
-  static public $webIndex_ = [];
-  static public $testIndex_ = [];
+  static public $index = [];
   static public $classLoader = [];
   static public $requireOnceFiles = [];
+
+  static public $mk_name="integrate.mk.hphp";
 }

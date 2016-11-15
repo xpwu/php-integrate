@@ -17,16 +17,15 @@ $development_FILES = [];
 
 $production_FILES = [];
 
-$require_once_FILES = [];
+$index = '';
 
-$web_INDEX = '';
+
+
+$require_once_FILES = [];
 
 $classLoader = [];
 
-$test_INDEX = '';
-
 $common_NOT_CHECK_FILES = [];
 
-$require_once_FILES = [];
 
 

@@ -11,11 +11,13 @@ require_once ("Utils.inc");
 
 class MkFileReader {
 
-  function __construct($relativeDir, $srcTopDir, $mode) {
+  function __construct($relativeDir, $srcTopDir, $type) {
     // $DES_TOP_DIR
     $this->topDir_ = $srcTopDir;
     $this->dir_ = $relativeDir;
-    $this->mode_ = $mode;
+    $this->type_fileName = $type."_FILES";
+
+//    $this->mode_ = $mode;
   }
 
   /**
@@ -25,30 +27,32 @@ class MkFileReader {
     return $this->readDir($this->dir_);
   }
 
-  /**
-   * @return array [fullPath=>relativePath]
-   */
-  public function devFiles(){return $this->devFiles_;}
-  public function proFiles(){return $this->proFiles_;}
+//  /**
+//   * @return array [fullPath=>relativePath]
+//   */
+//  public function devFiles(){return $this->devFiles_;}
+//  public function proFiles(){return $this->proFiles_;}
 
   /**
-   * @return array  devFiles() or proFiles() depende on the mode
+   * @return array
    */
   public function allFiles() {
-    if ($this->mode_ == Utils::DEV_MODE) {
-      return $this->devFiles_;
-    } else if ($this->mode_ == Utils::PRO_MODE) {
-      return $this->proFiles_;
-    }
-    return [];
+//    if ($this->mode_ == Utils::DEV_MODE) {
+//      return $this->devFiles_;
+//    } else if ($this->mode_ == Utils::PRO_MODE) {
+//      return $this->proFiles_;
+//    }
+//    return [];
+    return $this->files;
   }
   public function allNotCkFiles() {
-    if ($this->mode_ == Utils::DEV_MODE) {
-      return $this->notCkDevFiles;
-    } else if ($this->mode_ == Utils::PRO_MODE) {
-      return $this->notCkProFiles;
-    }
-    return [];
+//    if ($this->mode_ == Utils::DEV_MODE) {
+//      return $this->notCkDevFiles;
+//    } else if ($this->mode_ == Utils::PRO_MODE) {
+//      return $this->notCkProFiles;
+//    }
+//    return [];
+    return $this->notCkFiles;
   }
 
   private function readDir($curRelativedir) {
@@ -56,7 +60,7 @@ class MkFileReader {
       Log::error($this->topDir_.'/'.$curRelativedir. "not exist!");
       return false;
     }
-    $mk = $this->topDir_.'/'.$curRelativedir.'/'.'integrate.mk.hphp';
+    $mk = $this->topDir_.'/'.$curRelativedir.'/'.Utils::$mk_name;
     Log::debug($mk);
     if (!is_file($mk)) {
       Log::warning($mk." not exist.");
@@ -74,34 +78,38 @@ class MkFileReader {
     if (!$this->readNotCkFiles($curRelativedir, $common_NOT_CHECK_FILES)) {
       return false;
     }
-    if (($this->mode_ & Utils::DEV_MODE) != 0) {
-      if (!$this->readFiles($curRelativedir, $development_FILES)) {
-        return false;
-      }
+    if (!$this->readFiles($curRelativedir, ${$this->type_fileName})) {
+      return false;
     }
-    if (($this->mode_ & Utils::PRO_MODE) != 0) {
-      if (!$this->readFiles($curRelativedir, $production_FILES)) {
-        return false;
-      }
-    }
-    if (isset($web_INDEX)) {
+//
+//    if (($this->mode_ & Utils::DEV_MODE) != 0) {
+//      if (!$this->readFiles($curRelativedir, $development_FILES)) {
+//        return false;
+//      }
+//    }
+//    if (($this->mode_ & Utils::PRO_MODE) != 0) {
+//      if (!$this->readFiles($curRelativedir, $production_FILES)) {
+//        return false;
+//      }
+//    }
+    if (isset($index)) {
       if (count(Utils::$webIndex_)) {
-        Log::error("web_INDEX = $web_INDEX is duplicated, the first set is ". Utils::$webIndex_[0]);
+        Log::error("web_INDEX = $index is duplicated, the first set is ". Utils::$index[0]);
         return false;
       } else {
-        Utils::$webIndex_[$this->topDir_.'/'.$curRelativedir.'/'.$web_INDEX]
-          = $curRelativedir.'/'.$web_INDEX;
+        Utils::$index[$this->topDir_.'/'.$curRelativedir.'/'.$index]
+          = $curRelativedir.'/'.$index;
       }
     }
-    if (isset($test_INDEX)) {
-      if (count(Utils::$webIndex_)) {
-        Log::error("test_INDEX = $test_INDEX is duplicated, the first set is ". Utils::$webIndex_[0]);
-        return false;
-      } else {
-        Utils::$webIndex_[$this->topDir_.'/'.$curRelativedir.'/'.$test_INDEX]
-          = $curRelativedir.'/'.$test_INDEX;
-      }
-    }
+//    if (isset($test_INDEX)) {
+//      if (count(Utils::$webIndex_)) {
+//        Log::error("test_INDEX = $test_INDEX is duplicated, the first set is ". Utils::$webIndex_[0]);
+//        return false;
+//      } else {
+//        Utils::$webIndex_[$this->topDir_.'/'.$curRelativedir.'/'.$test_INDEX]
+//          = $curRelativedir.'/'.$test_INDEX;
+//      }
+//    }
     if (isset($classLoader)) {
       foreach ($classLoader as $key => $value) {
         $classLoader[$key] = $curRelativedir.'/'.$value;
@@ -133,7 +141,6 @@ class MkFileReader {
       }
     }
 
-
     if (isset($sub_DIRS)) {
       foreach ($sub_DIRS as $subdir) {
         $res = $this->readDir($curRelativedir.'/'.$subdir);
@@ -147,7 +154,7 @@ class MkFileReader {
     return true;
   }
 
-  private function readFiles($curRelativedir, &$files) {
+  private function readFiles($curRelativedir, $files) {
     Log::debug_dump($files);
     $pwd = getcwd();
     chdir("$this->topDir_/$curRelativedir");
@@ -187,27 +194,35 @@ class MkFileReader {
           $src = $this->topDir_.'/'.$curRelativedir.'/'.$src;
         }
       }
-      if (($this->mode_ & Utils::DEV_MODE) != 0) {
-        $res = array_search($curRelativedir.'/'.$des, $this->devFiles_);
-        if ($res !== false) {
-          Log::error("$res and $src have the same target file, which is $des");
-          return false;
-        }
-        $this->devFiles_[$src] = $curRelativedir.'/'.$des;
+
+      $res = array_search($curRelativedir.'/'.$des, $this->files);
+      if ($res !== false) {
+        Log::error("$res and $src have the same target file, which is $des");
+        return false;
       }
-      if (($this->mode_ & Utils::PRO_MODE) != 0) {
-        $res = array_search($curRelativedir.'/'.$des, $this->proFiles_);
-        if ($res !== false) {
-          Log::error("$res and $src have the same target file, which is $des");
-          return false;
-        }
-        $this->proFiles_[$src] = $curRelativedir.'/'.$des;
-      }
+      $this->files[$src] = $curRelativedir.'/'.$des;
+
+//      if (($this->mode_ & Utils::DEV_MODE) != 0) {
+//        $res = array_search($curRelativedir.'/'.$des, $this->devFiles_);
+//        if ($res !== false) {
+//          Log::error("$res and $src have the same target file, which is $des");
+//          return false;
+//        }
+//        $this->devFiles_[$src] = $curRelativedir.'/'.$des;
+//      }
+//      if (($this->mode_ & Utils::PRO_MODE) != 0) {
+//        $res = array_search($curRelativedir.'/'.$des, $this->proFiles_);
+//        if ($res !== false) {
+//          Log::error("$res and $src have the same target file, which is $des");
+//          return false;
+//        }
+//        $this->proFiles_[$src] = $curRelativedir.'/'.$des;
+//      }
     }
     return true;
   }
 
-  private function readNotCkFiles($curRelativedir, &$files) {
+  private function readNotCkFiles($curRelativedir, $files) {
     Log::debug_dump($files);
     $pwd = getcwd();
     chdir("$this->topDir_/$curRelativedir");
@@ -247,80 +262,94 @@ class MkFileReader {
           $src = $this->topDir_.'/'.$curRelativedir.'/'.$src;
         }
       }
-      if (($this->mode_ & Utils::DEV_MODE) != 0) {
-        $res = array_search($curRelativedir.'/'.$des, $this->devFiles_);
-        if ($res !== false) {
-          Log::error("$res and $src have the same target file, which is $des");
-          return false;
-        }
-        $this->notCkDevFiles[$src] = $curRelativedir.'/'.$des;
+
+      $res = array_search($curRelativedir.'/'.$des, $this->notCkFiles);
+      if ($res !== false) {
+        Log::error("$res and $src have the same target file, which is $des");
+        return false;
       }
-      if (($this->mode_ & Utils::PRO_MODE) != 0) {
-        $res = array_search($curRelativedir.'/'.$des, $this->proFiles_);
-        if ($res !== false) {
-          Log::error("$res and $src have the same target file, which is $des");
-          return false;
-        }
-        $this->notCkProFiles[$src] = $curRelativedir.'/'.$des;
-      }
+      $this->notCkFiles[$src] = $curRelativedir.'/'.$des;
+
+//      if (($this->mode_ & Utils::DEV_MODE) != 0) {
+//        $res = array_search($curRelativedir.'/'.$des, $this->devFiles_);
+//        if ($res !== false) {
+//          Log::error("$res and $src have the same target file, which is $des");
+//          return false;
+//        }
+//        $this->notCkDevFiles[$src] = $curRelativedir.'/'.$des;
+//      }
+//      if (($this->mode_ & Utils::PRO_MODE) != 0) {
+//        $res = array_search($curRelativedir.'/'.$des, $this->proFiles_);
+//        if ($res !== false) {
+//          Log::error("$res and $src have the same target file, which is $des");
+//          return false;
+//        }
+//        $this->notCkProFiles[$src] = $curRelativedir.'/'.$des;
+//      }
     }
     return true;
   }
 
   private function checkMk($mk) {
-    $before = get_defined_vars();
-    require ($mk);
-    $after = get_defined_vars();
-    $before["before"] = '';
-    $before['common_FILES'] = '';
-    $before['development_FILES'] = '';
-    $before['production_FILES'] = '';
-    $before['sub_DIRS'] = '';
-    $before['web_INDEX'] = '';
-    $before['classLoader'] = '';
-    $before['test_INDEX'] = '';
-    $before['common_NOT_CHECK_FILES'] = '';
-    $before['require_once_FILES'] = '';
-    $diff = array_diff_key($after, $before);
-    if (is_array($diff)) {
-      foreach ($diff as $val) {
-        log::error("$mk: \$$val is not used. should only define vars: \$common_FILES \$development_FILES \$production_FILES \$sub_DIRS");
-        return false;
-      }
-    }
-
-    if (isset($common_FILES) && !is_array($common_FILES)) {
-      Log::error("\$common_FILES should be a array");
-      return false;
-    }
-    if (isset($development_FILES) && !is_array($development_FILES)) {
-      Log::error("\$development_FILES should be a array");
-      return false;
-    }
-    if (isset($production_FILES) && !is_array($production_FILES)) {
-      Log::error("\$production_FILES should be a array");
-      return false;
-    }
-    if (isset($sub_DIRS) && !is_array($sub_DIRS)) {
-      Log::error("\$sub_DIRS should be a array");
-      return false;
-    }
-    if (isset($web_INDEX) && is_array($web_INDEX)) {
-      Log::error("\$web_INDEX should NOT be a array");
-      return false;
-    }
-    if (isset($classLoader) && !is_array($classLoader)) {
-      Log::error("\$classLoader should be a array");
-      return false;
-    }
     return true;
+//    $before = get_defined_vars();
+//    require ($mk);
+//    $after = get_defined_vars();
+//    $before["before"] = '';
+//    $before['common_FILES'] = '';
+//    $before['development_FILES'] = '';
+//    $before['production_FILES'] = '';
+//    $before['sub_DIRS'] = '';
+//    $before['web_INDEX'] = '';
+//    $before['classLoader'] = '';
+//    $before['test_INDEX'] = '';
+//    $before['common_NOT_CHECK_FILES'] = '';
+//    $before['require_once_FILES'] = '';
+//    $diff = array_diff_key($after, $before);
+//    if (is_array($diff)) {
+//      foreach ($diff as $val) {
+//        log::error("$mk: \$$val is not used. should only define vars: \$common_FILES \$development_FILES \$production_FILES \$sub_DIRS");
+//        return false;
+//      }
+//    }
+//
+//    if (isset($common_FILES) && !is_array($common_FILES)) {
+//      Log::error("\$common_FILES should be a array");
+//      return false;
+//    }
+//    if (isset($development_FILES) && !is_array($development_FILES)) {
+//      Log::error("\$development_FILES should be a array");
+//      return false;
+//    }
+//    if (isset($production_FILES) && !is_array($production_FILES)) {
+//      Log::error("\$production_FILES should be a array");
+//      return false;
+//    }
+//    if (isset($sub_DIRS) && !is_array($sub_DIRS)) {
+//      Log::error("\$sub_DIRS should be a array");
+//      return false;
+//    }
+//    if (isset($web_INDEX) && is_array($web_INDEX)) {
+//      Log::error("\$web_INDEX should NOT be a array");
+//      return false;
+//    }
+//    if (isset($classLoader) && !is_array($classLoader)) {
+//      Log::error("\$classLoader should be a array");
+//      return false;
+//    }
+//    return true;
   }
 
-  private $mode_;
+//  private $mode_;
   private $dir_;
   private $topDir_;
-  private $devFiles_ = [];
-  private $proFiles_ = [];
-  private $notCkDevFiles = [];
-  private $notCkProFiles = [];
+
+//  private $devFiles_ = [];
+//  private $proFiles_ = [];
+//  private $notCkDevFiles = [];
+//  private $notCkProFiles = [];
+
+  private $type_fileName;
+  private $files=[];
+  private $notCkFiles=[];
 }

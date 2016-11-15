@@ -11,13 +11,13 @@ require_once ("Log.inc");
 require_once ("Utils.inc");
 
 class AutoChecker {
-  function __construct(MkFileReader $mkr, $mode) {
+  function __construct(MkFileReader $mkr) {
     $this->mkr_ = $mkr;
-    $this->mode_ = $mode;
+//    $this->mode_ = $mode;
   }
 
   public function outputAutoload(&$fileName) {
-    $className = "zxg_AutoLoader";
+    $className = "inte_AutoLoader";
     $fileName = "$className.inc";
     $autoload = <<<EOF
 <?php
@@ -130,5 +130,5 @@ EOF;
 
   private $mkr_;
   private $classMap_ = [];
-  private $mode_;
+//  private $mode_;
 }
