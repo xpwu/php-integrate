@@ -1,0 +1,7 @@
+<?php
+
+$common_FILES = [
+  'Test.inc',
+  '*_proto.inc'
+];
+

@@ -1,0 +1,16 @@
+<?php
+
+
+$sub_DIRS = [
+  'third_party',
+  'subdir2',
+  'subdir1',
+  'glob'
+];
+
+$common_FILES = [
+  'CGI.inc'
+];
+
+$index = 'index.php';
+

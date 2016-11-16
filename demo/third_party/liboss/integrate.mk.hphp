@@ -1,0 +1,14 @@
+<?php
+
+$require_once_FILES = [
+  'oss.php'
+];
+
+$classLoader = [];
+
+$common_NOT_CHECK_FILES = [
+  'oss.php'
+];
+
+
+

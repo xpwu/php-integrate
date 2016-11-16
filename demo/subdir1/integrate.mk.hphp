@@ -1,0 +1,12 @@
+<?php
+
+
+$sub_DIRS = [
+  'subdir11',
+  'subdir12'
+];
+
+$common_FILES = [
+  'Test.inc'
+];
+

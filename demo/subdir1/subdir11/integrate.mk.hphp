@@ -1,0 +1,16 @@
+<?php
+
+
+$common_FILES = [
+  'Test.inc'
+];
+
+$pro_FILES = [
+  'Pro.inc'
+];
+
+$dev_FILES = [
+  'Dev.inc'
+];
+
+
