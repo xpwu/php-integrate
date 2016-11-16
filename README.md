@@ -9,7 +9,7 @@
     在项目的根目录新建integrate.conf.hphp文件, integrate.conf.hphp所在的目录是
     集成系统的顶级目录. 在顶级目录以及子目录下新建integrate.mk.hphp文件, 集成工具会
     根据integrate.conf.hphp中的配置和integrate.mk.hphp中的指示进行集成. 在任何
-    子路径下运行pinte 或者 php pinte.phar 即可. 可以把pinte拷贝到系统路径中, 方便执行.
+    子路径下运行phpinte 或者 php pinte.phar 即可. 可以把phpinte拷贝到系统路径中, 方便执行.
     集成系统会对代码进行检查, 代码中不允许定义全局变量和函数,只能定义命名空间和类名. 
     集成系统会自动生成AutoLoader, 不需要在代码前面加入 require 或者 include 之类的代码
 

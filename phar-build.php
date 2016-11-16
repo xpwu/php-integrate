@@ -34,8 +34,8 @@ if (Phar::canWrite()) {
   __HALT_COMPILER(); ?>
 EOF;
   $ph->setStub($stub);
-  rename("bin/pinte_exe.phar", "bin/pinte");
-  chmod("bin/pinte", 777);
+  rename("bin/pinte_exe.phar", 'bin/phpinte');
+  chmod('bin/phpinte', 0777);
 
   // pinte.phar
   $ph = new Phar("bin/pinte.phar");
