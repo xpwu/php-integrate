@@ -70,7 +70,7 @@ class Integrater {
       }
       $filename = array_keys($this->autoload_)[0];
       $ph['AutoLoad.inc'] = $this->autoload_[$filename];
-      $fl = array_keys(Utils::$webIndex_)[0];
+      $fl = array_keys(Utils::$index)[0];
       $ph['webIndex.php'] = file_get_contents($fl);
 
       $requireOnceFiles = '';
@@ -89,7 +89,7 @@ class Integrater {
   inte_AutoLoader::run();
   inte_AutoLoader::\$prefix = "phar://$pharName.phar";
   $requireOnceFiles
-  require_once("phar://$pharName.phar/webIndex.php");
+  require_once('phar://' . __FILE__ . "/webIndex.php");
   __HALT_COMPILER(); ?>
 EOF;
 

@@ -13,7 +13,6 @@ require_once ("Utils.inc");
 class AutoChecker {
   function __construct(MkFileReader $mkr) {
     $this->mkr_ = $mkr;
-//    $this->mode_ = $mode;
   }
 
   public function outputAutoload(&$fileName) {
@@ -130,5 +129,4 @@ EOF;
 
   private $mkr_;
   private $classMap_ = [];
-//  private $mode_;
 }
