@@ -11,7 +11,7 @@ require_once ("Utils.inc");
 
 class Main {
   static public function run() {
-    $opt = getopt("hc:");
+    $opt = getopt("hvc:");
 
     $topDirStr = "integrate.conf.hphp";
 
@@ -46,7 +46,8 @@ class Main {
     static $usage = <<<EOF
 Usage:  option
   option: -h show this help;
-          -c conf file name.
+          -c conf file name;
+          -v show version.
 EOF;
 
     if (array_key_exists('h', $opt) && $opt['h'] === false) {
@@ -56,6 +57,11 @@ EOF;
 
     if (array_key_exists('c', $opt)) {
       $topDirStr = $opt['c'];
+    }
+
+    if (array_key_exists('v', $opt)) {
+      echo "phpinte 0.1.1\n";
+      return false;
     }
 
     return true;
