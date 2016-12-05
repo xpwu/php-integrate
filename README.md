@@ -11,7 +11,9 @@
     根据integrate.conf.hphp中的配置和integrate.mk.hphp中的指示进行集成. 在任何
     子路径下运行phpinte 或者 php pinte.phar 即可. 可以把phpinte拷贝到系统路径中, 方便执行.
     集成系统会对代码进行检查, 代码中不允许定义全局变量和函数,只能定义命名空间和类名. 
-    集成系统会自动生成AutoLoader, 不需要在代码前面加入 require 或者 include 之类的代码
+    集成系统会自动生成AutoLoader, 不需要在代码前面加入 require 或者 include 之类的代码.
+    
+**phpinte 退出码0表示执行成功, 非0表示失败. 可用$? 获取**
 
 ### 基本配置
 *   **integrate.conf.hphp的配置项**

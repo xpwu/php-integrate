@@ -16,7 +16,7 @@ class Main {
     $topDirStr = "integrate.conf.hphp";
 
     if (!self::parseOpt($opt, $topDirStr)) {
-      return;
+      return 1;
     }
     $topDir = self::findSrcTopDir($topDirStr);
 
@@ -30,16 +30,17 @@ class Main {
 
     $integrater = new Integrater($mode, $topDir);
     if (!$integrater->integrate()) {
-      return;
+      return 1;
     }
 
     if ($pharName !== '') {
       if (! $integrater->phar($pharName)) {
-        return;
+        return 1;
       }
     }
 
     echo "---success---\n";
+    return 0;
   }
 
   static private function parseOpt($opt, &$topDirStr) {
@@ -80,4 +81,4 @@ EOF;
 
 }
 
-Main::run();
+exit (Main::run());
