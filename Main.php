@@ -9,9 +9,10 @@
 require_once ("Integrater.inc");
 require_once ("Utils.inc");
 
+
 class Main {
   static public function run() {
-    $opt = getopt("hvc:");
+    $opt = getopt("hvwc:");
 
     $topDirStr = "integrate.conf.hphp";
 
@@ -19,6 +20,10 @@ class Main {
       return 1;
     }
     $topDir = self::findSrcTopDir($topDirStr);
+    if (!$topDir) {
+      Log::error("not find top dir");
+      return 1;
+    }
 
     $pharName = $topDir.'main';
     $mode = "dev";
@@ -48,8 +53,15 @@ class Main {
 Usage:  option
   option: -h show this help;
           -c conf file name;
-          -v show version.
+          -v show version;
+          -w show path.
 EOF;
+
+    if (!function_exists("pcntl_fork")) {
+      $usage = "---NOT pcntl".PHP_EOL.$usage;
+    } else {
+      $usage = "---USE pcntl".PHP_EOL.$usage;
+    }
 
     if (array_key_exists('h', $opt) && $opt['h'] === false) {
       echo $usage.PHP_EOL;
@@ -61,7 +73,12 @@ EOF;
     }
 
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.1.1\n";
+      echo "phpinte 0.2".PHP_EOL;
+      return false;
+    }
+
+    if (array_key_exists('w', $opt)) {
+      echo getcwd().'/'.$_SERVER['argv'][0].PHP_EOL;
       return false;
     }
 
@@ -74,6 +91,9 @@ EOF;
     while (!is_file($pwd.'/'.$topDirStr)) {
       chdir('..');
       $pwd = getcwd();
+      if ($pwd === '/') {
+        return false;
+      }
     }
     chdir($pwdori);
     return $pwd;

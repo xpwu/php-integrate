@@ -72,6 +72,14 @@ EOF;
    * @return bool
    */
   public function check(){
+    if (!function_exists("pcntl_fork")) {
+      return $this->checkWithNormal();
+    } else {
+      return $this->checkWithPcntl();
+    }
+  }
+
+  private function checkWithNormal() {
     $files = $this->mkr_->allFiles();
     foreach ($files as $k=>$v) {
       if (pathinfo($k, PATHINFO_EXTENSION) === 'phar') {
@@ -82,6 +90,106 @@ EOF;
       }
     }
     return true;
+  }
+
+  private function checkWithPcntl() {
+    $files = [];
+    $files[0] = $this->mkr_->allFiles();
+    $files[1] = [];
+
+    $i= 0;
+
+    while (count($files[$i]) != 0) {
+      $j = ($i == 0)? 1 : 0;
+      $files[$j] = [];
+      foreach ($files[$i] as $k=>$v) {
+        if (pathinfo($k, PATHINFO_EXTENSION) === 'phar') {
+          continue;
+        }
+        $res = $this->checkAfileWithPcntl($k, $v);
+        if ($res === 1) {
+          return false;
+        } else if($res === 2) {
+          $files[$j][$k] = $v;
+        }
+      }
+      if (count($files[$i]) == count($files[$j])) {
+        Log::error("如下文件可能存在循环依赖, 请重点检查extends or implement 类的依赖");
+        foreach ($files[$i] as $k => $v) {
+          Log::error($k);
+        }
+        return false;
+      }
+      $i = ($i == 0)? 1 : 0;
+    }
+
+
+    return true;
+  }
+
+  // 0: success; 1: failed; 2: delay
+  private function checkAfileWithPcntl($srcfile, $desfile) {
+    $beforeConst = get_defined_constants();
+    $beforeClass = get_declared_classes();
+    $beforeInterface = get_declared_interfaces();
+//    $beforeVar = get_defined_vars();
+//    $beforeVar["beforeVar"] = $beforeVar;
+
+    $pid = pcntl_fork();
+//    $beforeVar["pid"] = $pid;
+
+    switch ($pid) {
+      case -1: Log::error("pcntl_fork failed"); return 1;
+      case 0 : {
+        error_reporting(0);
+        include_once $srcfile;
+        exit(0);
+      }
+      default : {
+        pcntl_waitpid($pid, $status);
+        if (!pcntl_wifexited($status) || pcntl_wexitstatus($status)) {
+          return 2;
+        }
+      }
+    }
+
+    $beforeVar = get_defined_vars();
+    $beforeVar["beforeVar"] = $beforeVar;
+    include_once $srcfile;
+    $afterVar = get_defined_vars();
+    $afterConst = get_defined_constants();
+    $afterClass = get_declared_classes();
+    $afterInterface = get_declared_interfaces();
+
+    Log::debug_dump($beforeVar);
+    Log::debug_dump($afterVar);
+    Log::debug("afterVar type = ".gettype($afterVar));
+    Log::debug("beforeVar type = ".gettype($beforeVar));
+    $diffVar = array_diff_key($afterVar, $beforeVar);
+    Log::debug("diffVar = ".gettype($diffVar));
+    $diffClass = array_diff($afterClass, $beforeClass);
+    $diffConst = array_diff($afterConst, $beforeConst);
+    $diffInterface = array_diff($afterInterface, $beforeInterface);
+    Log::debug_dump($afterClass);
+
+    if (count($diffVar) != 0) {
+      log::error($srcfile. " can NOT define var!---".implode(','
+          , array_keys($diffVar)));
+      return 1;
+    }
+    if (count($diffConst) != 0) {
+      log::error($srcfile. " can NOT define global const!---".implode(','
+          , array_keys($diffConst)));
+      return 1;
+    }
+    foreach ($diffClass as $className) {
+      $this->classMap_[$className] = $desfile;
+    }
+    foreach ($diffInterface as $inter) {
+      $this->classMap_[$inter] = $desfile;
+    }
+
+    return 0;
   }
 
   private function checkAfile($srcfile, $desfile) {

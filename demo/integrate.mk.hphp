@@ -9,6 +9,7 @@ $sub_DIRS = [
 ];
 
 $common_FILES = [
+  'SubCGI.inc',
   'CGI.inc'
 ];
 
