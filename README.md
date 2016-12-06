@@ -12,8 +12,14 @@
     子路径下运行phpinte 或者 php pinte.phar 即可. 可以把phpinte拷贝到系统路径中, 方便执行.
     集成系统会对代码进行检查, 代码中不允许定义全局变量和函数,只能定义命名空间和类名. 
     集成系统会自动生成AutoLoader, 不需要在代码前面加入 require 或者 include 之类的代码.
-    
-**phpinte 退出码0表示执行成功, 非0表示失败. 可用$? 获取**
+
+### phpinte 的运行
+    1. phpinte 退出码0表示执行成功, 非0表示失败. 可用$? 获取
+    2. 有两种模式, pcntl 模式 与 非pcntl模式. -h 参数可以查看模式, ---NOT pcntl, 表示非pcntl
+    模式, ---USE pcntl, 表示pcntl模式. 
+    3. 两种模式的区别: pcntl 模式不关心mk中文件的顺序, 非pcntl 模式必须把父类或者接口文件放在
+    子类文件或者实现文件前面
+    4. pcntl模式开启: 启用pcntl扩展, 自动就变为pcntl模式
 
 ### 基本配置
 *   **integrate.conf.hphp的配置项**
