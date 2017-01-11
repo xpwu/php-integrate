@@ -31,6 +31,7 @@ class Main {
     if (isset($type)) {$mode = $type;}
     if (isset($phar_name)) {$pharName = $phar_name;}
     if (isset($mk_name)) {Utils::$mk_name = $mk_name;}
+    if (isset($index)) {Utils::$index[$topDir.'/'.$index] = $index;}
 
 
     $integrater = new Integrater($mode, $topDir);

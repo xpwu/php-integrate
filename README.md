@@ -24,18 +24,21 @@
 ### 基本配置
 *   **integrate.conf.hphp的配置项**
 
-    $type = "dev"; 编译类型
-    $phar_name = __DIR__."/main"; phar的输出文件名,会自动加上.phar 后缀
+    $type = "dev"; 编译类型   
+    $phar_name = __DIR__."/main"; phar的输出文件名,会自动加上.phar 后缀   
+    $index="xxx"; 指定入口文件,在phar包中需要入口文件是,可以利用index配置指定, 
+    此配置与mk中$index配置等效,建议在新版中index加入conf文件中,mk文件的$index会逐步取消
 
 
 *   **integrate.mk.hphp的配置选项**
 
-    $sub_DIRS=[dir1, dir2]; 配置子路径
-    $common_FILES = []; 所有类型都包含的文件
-    $xxx_FILES=[]; 指定类型包含的文件, 比如integrate.conf.hphp中设置
-    $type = "dev",则$dev_FILES中包括的文件才会打包进phar中, 而$pro_FILES, 
-    $test_FILES等不会加入其中.
-    $index=xxxx; 指定入口文件,在phar包中需要入口文件是,可以利用index配置指定.
+    $sub_DIRS=[dir1, dir2]; 配置子路径   
+    $common_FILES = []; 所有类型都包含的文件   
+    $xxx_FILES=[]; 指定类型包含的文件, 比如integrate.conf.hphp中设置   
+    $type = "dev",则$dev_FILES中包括的文件才会打包进phar中, 而$pro_FILES,
+    $test_FILES等不会加入其中.   
+    $index=xxxx; 指定入口文件,在phar包中需要入口文件是,可以利用index配置指定,
+    建议在conf文件中指定,mk文件中的此配置在后续版本中会逐渐取消
 
 ### 高级配置
     pinte 可以加 -c 参数, 指定另外的文件作为顶层路径标示文件

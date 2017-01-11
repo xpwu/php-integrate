@@ -17,7 +17,8 @@ $development_FILES = [];
 
 $production_FILES = [];
 
-$index = '';
+// 建议在conf中配置
+//$index = '';
 
 
 

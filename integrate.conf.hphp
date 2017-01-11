@@ -21,3 +21,8 @@ $phar_name = __DIR__."/main";
  * default is integrate.mk.hphp
  */
 $mk_name = "integrate.mk.hphp";
+
+/**
+ * set index file
+ */
+//$index =

@@ -13,5 +13,5 @@ $common_FILES = [
   'CGI.inc'
 ];
 
-$index = 'index.php';
+//$index = 'index.php';
 
