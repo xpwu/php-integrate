@@ -79,7 +79,12 @@ EOF;
     }
 
     if (array_key_exists('w', $opt)) {
-      echo getcwd().'/'.$_SERVER['argv'][0].PHP_EOL;
+      $name = $_SERVER['argv'][0].PHP_EOL;
+      if (substr($name, 0, 1) == "/") {
+        echo $name;
+      } else {
+        echo getcwd().'/'.$_SERVER['argv'][0].PHP_EOL;
+      }
       return false;
     }
 
