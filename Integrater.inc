@@ -70,8 +70,13 @@ class Integrater {
       }
       $filename = array_keys($this->autoload_)[0];
       $ph['AutoLoad.inc'] = $this->autoload_[$filename];
-      $fl = array_keys(Utils::$index)[0];
-      $ph['webIndex.php'] = file_get_contents($fl);
+      if (count(Utils::$index) != 0) {
+        $fl = array_keys(Utils::$index)[0];
+        $ph['webIndex.php'] = file_get_contents($fl);
+      } else {
+        $ph['webIndex.php'] = "<?php\n";
+      }
+
 
       $requireOnceFiles = '';
       foreach (Utils::$requireOnceFiles as $file) {
