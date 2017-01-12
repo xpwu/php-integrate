@@ -114,7 +114,7 @@ EOF;
         }
       }
       if (count($files[$i]) == count($files[$j])) {
-        Log::error("如下文件可能存在循环依赖, 请重点检查extends or implement 类的依赖");
+        Log::error('如下文件可能存在循环依赖或者少加入了依赖文件, 请重点检查extends or implement 类的依赖');
         foreach ($files[$i] as $k => $v) {
           Log::error($k);
         }
