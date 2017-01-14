@@ -45,21 +45,27 @@
     integrate.conf.hphp 中可以设置$mk_name = "xxx", 指定mk的文件名
 
 ### 集成第三方包:
-    第三方包中的写法不一定与集成系统的要求相匹配, 直接使用$common_FILES = [] 或者
-     xxx_FILES=[] 指定第三方会出现错误, 因此系统使用另外的配置选项.
-
-    $common_NOT_CHECK_FILES = []; 打包所有需要的文件,但不用检查文件
-    $require_once_FILES = []; 使用第三方包时,部分主文件常常需要使用include 或者 
-        require 包含进调用我们写的调用文件,但是 在我们自己写的文件中不能使用include 或者
-        require等函数. 此配置项就是解决此问题,
-    $classLoader = []; 由于第三方文件不能生产AutoLoader, 部分第三方包提供给调用方
-        的接口是类接口,也可以使用此配置项生产AutoLoader, 而不用在$require_once_FILES = [] 
-        中加入文件, $classLoader = [] 配置的类是惰性加载. 配置参数为 "类名"=>"文件名"
+第三方包中的写法不一定与集成系统的要求相匹配,直接使用$common_FILES = [] 或者xxx_FILES=[] 
+指定第三方会出现错误, 因此系统使用另外的配置选项, 有三种方式使用。
+1、把第三方代码打包进phar包中
+     使用$sub_DIRS 与 $common_NOT_CHECK_FILES 打包所有需要的文件；使用$require_once_FILES = [] 
+     指定使用第三方代码库的引入文件，或者$classLoader=[] 指定类的加载文件，配置为"类名"=>"文件名"，
+     $classLoader相对于$require_once_FILES的优势为支持惰性加载。
+2、不打包第三方代码进phar中
+     使用$require_once_exclude_FILES = [],指定第三方代码库的引入文件；也可以使用$classLoader_exclude = []
+     执行类的加载文件，配置为"类名"=>"文件名"，其优势为支持惰性加载。注意，需要在php.ini中指定正确的
+     include_path 保证能加载文件成功。在执行phar的环境和集成phar的环境都需要能正确的加载到第三方代码库，如果
+     集成环境不能正确的加载指定的第三方代码文件，则phpinte会执行失败，如果执行环境不能正确加载，运行xxx.phar会
+     失败。
+3、自己写中间文件通过require_once 命令加载第三方包，第三方包不在phar中
+     使用$common_NOT_CHECK_FILES=[]打包自己写的中间文件，$require_once_FILES = [] 或者$classLoader=[]加载
+     自己写的中间文件，在中间文件的 require_once 中包括第三方文件，一样需要保证require_once 在打包和运行环境中都能
+     正确的找到第三方文件。
+   
 
 ### mk配置中的参数:
     所有配置中的路径都是相对于mk的文件路径.
     _FILES=[]中可以直接写文件名,也可以写  "src file name"=>"dest file name", 也
-    可以使用匹配符 *.inc 等形式, 建议尽量少用*匹配符, 应该对每一个使用的文件都有明确指定
-    是一种好的习惯
+    可以使用匹配符 *.inc 等形式
 
 
