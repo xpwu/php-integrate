@@ -25,6 +25,8 @@ class Main {
       return 1;
     }
 
+    Utils::$topDir = $topDir;
+
     $pharName = $topDir.'main';
     $mode = "dev";
     require_once ($topDir."/".$topDirStr);
@@ -74,7 +76,7 @@ EOF;
     }
 
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.2".PHP_EOL;
+      echo "phpinte 0.3".PHP_EOL;
       return false;
     }
 

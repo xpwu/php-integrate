@@ -30,6 +30,10 @@ class Utils {
   static public $index = [];
   static public $classLoader = [];
   static public $requireOnceFiles = [];
+  static public $requireOnceExcludeFiles = [];
+  static public $classLoader_exclude = [];
 
   static public $mk_name="integrate.mk.hphp";
+
+  static public $topDir;
 }

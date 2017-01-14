@@ -21,12 +21,15 @@ $production_FILES = [];
 //$index = '';
 
 
+$common_NOT_CHECK_FILES = [];
 
 $require_once_FILES = [];
 
 $classLoader = [];
 
-$common_NOT_CHECK_FILES = [];
+$classLoader_exclude = [];
+
+$require_once_exclude_FILES = [];
 
 
 

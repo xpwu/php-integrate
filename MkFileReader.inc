@@ -90,13 +90,31 @@ class MkFileReader {
         return false;
       }
     }
+
     if (isset($require_once_FILES)) {
       foreach ($require_once_FILES as $key => $value) {
         $require_once_FILES[$key] = $curRelativedir.'/'.$value;
       }
 
       Utils::$requireOnceFiles = array_merge(Utils::$requireOnceFiles, $require_once_FILES);
+    }
 
+    if (isset($require_once_exclude_FILES)) {
+      Utils::$requireOnceExcludeFiles = array_merge(Utils::$requireOnceExcludeFiles
+        , $require_once_exclude_FILES);
+    }
+
+    if (isset($classLoader_exclude)) {
+
+      $intersect = array_intersect_key(Utils::$classLoader_exclude, $classLoader_exclude);
+      if (count($intersect) === 0) {
+        Utils::$classLoader_exclude = array_merge(Utils::$classLoader_exclude, $classLoader_exclude);
+      } else {
+        $inKey = array_keys($intersect);
+        Log::error("duplicated $inKey[0]---".Utils::$classLoader_exclude[$inKey[0]]
+          ." AND ".$classLoader_exclude[$inKey[0]]);
+        return false;
+      }
     }
 
     if (isset($sub_DIRS)) {

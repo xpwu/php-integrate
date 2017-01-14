@@ -39,11 +39,17 @@ class $className {
     }
 
     self::\$hasLoad_ = spl_autoload_register( function(\$classname) {
-      if (!array_key_exists(\$classname, self::\$classMap_)) {
-				return false;
+      if (array_key_exists(\$classname, self::\$classMap_)) {
+        require_once (self::\$prefix.'/'.self::\$classMap_[\$classname]);
+				return true;
 			}
-			require_once (self::\$prefix.'/'.self::\$classMap_[\$classname]);
-			return true;
+
+			if (array_key_exists(\$classname, self::\$excludeClassMap_)) {
+        require_once (self::\$excludeClassMap_[\$classname]);
+				return true;
+			}
+
+			return false;
     });
     return self::\$hasLoad_;
   }
@@ -61,6 +67,16 @@ EOF;
 
     $autoload .= <<<EOF
   ];
+
+  static private \$excludeClassMap_ = [\n
+EOF;
+
+    foreach (Utils::$classLoader_exclude as $cls => $file) {
+      $autoload .= "    '" . $cls . "' => \"" . $file . "\",\n";
+    }
+
+    $autoload .= <<<EOF
+  ];
 }
 
 
@@ -72,6 +88,23 @@ EOF;
    * @return bool
    */
   public function check(){
+
+    foreach (Utils::$requireOnceFiles as $key=>$requireOnceFile) {
+      require_once Utils::$topDir.'/'.$requireOnceFile;
+    }
+
+    foreach (Utils::$requireOnceExcludeFiles as $key=>$requireOnceExcludeFileFile) {
+      require_once $requireOnceExcludeFileFile;
+    }
+
+    foreach (Utils::$classLoader_exclude as $key=>$classLoader_exclude) {
+      require_once $classLoader_exclude;
+    }
+
+    foreach (Utils::$classLoader as $key => $value) {
+      require_once Utils::$topDir.'/'.$value;
+    }
+
     if (!function_exists("pcntl_fork")) {
       return $this->checkWithNormal();
     } else {
@@ -114,7 +147,7 @@ EOF;
         }
       }
       if (count($files[$i]) == count($files[$j])) {
-        Log::error('如下文件可能存在循环依赖或者少加入了依赖文件, 请重点检查extends or implement 类的依赖');
+        Log::error("如下文件出现集成错误, 可能原因:1、存在循环依赖或者少加入了依赖文件, 请重点检查extends or implement 类的依赖; 或者2、文件代码有误, 不能执行成功");
         foreach ($files[$i] as $k => $v) {
           Log::error($k);
         }

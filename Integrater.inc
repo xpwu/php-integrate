@@ -84,6 +84,11 @@ class Integrater {
         $requireOnceFiles .= "\n  require_once(\"$rf\");";
       }
 
+      $requireOnceExcludeFiles = '';
+      foreach (Utils::$requireOnceExcludeFiles as $requireOnceExcludeFile) {
+        $requireOnceExcludeFiles .= "\n  require_once(\"$requireOnceExcludeFile\");";
+      }
+
       $ph->stopBuffering();
       $stub = <<<EOF
 <?php
@@ -94,6 +99,7 @@ class Integrater {
   inte_AutoLoader::run();
   inte_AutoLoader::\$prefix = "phar://$pharName.phar";
   $requireOnceFiles
+  $requireOnceExcludeFiles
   require_once('phar://' . __FILE__ . "/webIndex.php");
   __HALT_COMPILER(); ?>
 EOF;
