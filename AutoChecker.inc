@@ -174,7 +174,11 @@ EOF;
     switch ($pid) {
       case -1: Log::error("pcntl_fork failed"); return 1;
       case 0 : {
-        error_reporting(0);
+        if (Utils::$showError) {
+          error_reporting(E_ERROR);
+        } else {
+          error_reporting(0);
+        }
         include_once $srcfile;
         exit(0);
       }

@@ -7,3 +7,4 @@
  */
 
 new \Demo\CGI();
+new \Demo\SubSubCGI();

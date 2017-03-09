@@ -36,4 +36,6 @@ class Utils {
   static public $mk_name="integrate.mk.hphp";
 
   static public $topDir;
+
+  static public $showError = false;
 }

@@ -9,8 +9,9 @@ $sub_DIRS = [
 ];
 
 $common_FILES = [
-  'SubCGI.inc',
-  'CGI.inc'
+  'SubSubCGI.inc',
+  'CGI.inc',
+  'SubCGI.inc'
 ];
 
 //$index = 'index.php';

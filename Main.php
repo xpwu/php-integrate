@@ -12,7 +12,7 @@ require_once ("Utils.inc");
 
 class Main {
   static public function run() {
-    $opt = getopt("hvwc:");
+    $opt = getopt("hvwec:");
 
     $topDirStr = "integrate.conf.hphp";
 
@@ -57,6 +57,7 @@ Usage:  option
   option: -h show this help;
           -c conf file name;
           -v show version;
+          -e show error log;
           -w show path.
 EOF;
 
@@ -75,8 +76,12 @@ EOF;
       $topDirStr = $opt['c'];
     }
 
+    if (array_key_exists('e', $opt)) {
+      Utils::$showError = true;
+    }
+
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.3".PHP_EOL;
+      echo "phpinte 0.4".PHP_EOL;
       return false;
     }
 

@@ -2,15 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: xpwu
- * Date: 2016/12/6
- * Time: 下午6:21
+ * Date: 2017/3/9
+ * Time: 下午6:02
  */
 
 namespace Demo;
 
 
-class SubCGI extends CGI{
+class SubSubCGI extends SubCGI{
   function __construct() {
     parent::__construct();
+    echo "SubSubCGI\n";
   }
 }
