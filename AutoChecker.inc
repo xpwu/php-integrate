@@ -175,7 +175,7 @@ EOF;
       case -1: Log::error("pcntl_fork failed"); return 1;
       case 0 : {
         if (Utils::$showError) {
-          error_reporting(E_ERROR);
+          error_reporting(E_ALL);
         } else {
           error_reporting(0);
         }
