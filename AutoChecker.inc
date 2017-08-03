@@ -28,8 +28,6 @@ class AutoChecker {
 
 class $className {
 
-  static public \$prefix = '.';
-
   /**
    * @return bool|void
    */
@@ -40,7 +38,7 @@ class $className {
 
     self::\$hasLoad_ = spl_autoload_register( function(\$classname) {
       if (array_key_exists(\$classname, self::\$classMap_)) {
-        require_once (self::\$prefix.'/'.self::\$classMap_[\$classname]);
+        require_once (dirname(__FILE__).'/'.self::\$classMap_[\$classname]);
 				return true;
 			}
 

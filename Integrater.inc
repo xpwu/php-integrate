@@ -80,8 +80,7 @@ class Integrater {
 
       $requireOnceFiles = '';
       foreach (Utils::$requireOnceFiles as $file) {
-        $rf = "phar://$pharName.phar/".$file;
-        $requireOnceFiles .= "\n  require_once(\"$rf\");";
+        $requireOnceFiles .= "\n  require_once(\"phar://\".__FILE__.\"/".$file."\");";
       }
 
       $requireOnceExcludeFiles = '';
@@ -95,11 +94,13 @@ class Integrater {
   Phar::interceptFileFuncs();
   Phar::mapPhar();
   set_include_path('phar://' . __FILE__ . PATH_SEPARATOR . get_include_path());
-  require_once("phar://$pharName.phar/AutoLoad.inc");
+
+  require_once("phar://".__FILE__."/AutoLoad.inc");
   inte_AutoLoader::run();
-  inte_AutoLoader::\$prefix = "phar://$pharName.phar";
+
   $requireOnceFiles
   $requireOnceExcludeFiles
+  
   require_once('phar://' . __FILE__ . "/webIndex.php");
   __HALT_COMPILER(); ?>
 EOF;

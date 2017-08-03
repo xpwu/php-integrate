@@ -81,7 +81,7 @@ EOF;
     }
 
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.4".PHP_EOL;
+      echo "phpinte 0.5".PHP_EOL;
       return false;
     }
 
