@@ -57,6 +57,12 @@ class Integrater {
     return true;
   }
 
+  public function onlyOutputAutoLoader($fullPath) {
+    $filename = array_keys($this->autoload_)[0];
+    file_put_contents($fullPath.'/AutoLoader.inc', $this->autoload_[$filename]);
+    return true;
+  }
+
   public function phar($pharPath) {
     $pharName = basename($pharPath);
     if (Phar::canWrite()) {

@@ -29,7 +29,7 @@ class AutoChecker {
 class $className {
 
   /**
-   * @return bool|void
+   * @return bool
    */
   static function run() {
     if (self::\$hasLoad_) {
@@ -53,7 +53,7 @@ class $className {
   }
 
   static private \$hasLoad_ = false;
-  static private \$classMap_ = [\n
+  static public \$classMap_ = [\n
 EOF;
 
     foreach ($this->classMap_ as $cls => $file) {

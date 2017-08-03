@@ -12,11 +12,13 @@ require_once ("Utils.inc");
 
 class Main {
   static public function run() {
-    $opt = getopt("hvwec:");
+    $opt = getopt("hvwec:l:");
 
     $topDirStr = "integrate.conf.hphp";
 
-    if (!self::parseOpt($opt, $topDirStr)) {
+    $onlyClassLoaderPath = "";
+
+    if (!self::parseOpt($opt, $topDirStr, $onlyClassLoaderPath)) {
       return 1;
     }
     $topDir = self::findSrcTopDir($topDirStr);
@@ -41,7 +43,14 @@ class Main {
       return 1;
     }
 
-    if ($pharName !== '') {
+    if ($onlyClassLoaderPath != "") {
+      if (! $integrater->onlyOutputAutoLoader($topDir
+        ."/".$onlyClassLoaderPath)) {
+        return 1;
+      }
+    }
+
+    if ($pharName !== '' && $onlyClassLoaderPath == "") {
       if (! $integrater->phar($pharName)) {
         return 1;
       }
@@ -51,14 +60,17 @@ class Main {
     return 0;
   }
 
-  static private function parseOpt($opt, &$topDirStr) {
+  static private function parseOpt($opt, &$topDirStr, &$onlyClassLoader) {
     static $usage = <<<EOF
 Usage:  option
   option: -h show this help;
           -c conf file name;
           -v show version;
           -e show error log;
-          -w show path.
+          -w show path;
+          -l only output class loader to path
+              , relative to top dir
+              , and filename is AutoLoader.inc.
 EOF;
 
     if (!function_exists("pcntl_fork")) {
@@ -80,8 +92,12 @@ EOF;
       Utils::$showError = true;
     }
 
+    if (array_key_exists('l', $opt)) {
+      $onlyClassLoader = $opt['l'];
+    }
+
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.5".PHP_EOL;
+      echo "phpinte 0.6".PHP_EOL;
       return false;
     }
 
