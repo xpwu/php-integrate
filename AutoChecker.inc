@@ -28,6 +28,8 @@ class AutoChecker {
 
 class $className {
 
+  static public \$prefixDir = null;
+
   /**
    * @return bool
    */
@@ -35,10 +37,14 @@ class $className {
     if (self::\$hasLoad_) {
       return true;
     }
+    
+    if (self::\$prefixDir === null) {
+      self::\$prefixDir = dirname(__FILE__);
+    }
 
     self::\$hasLoad_ = spl_autoload_register( function(\$classname) {
       if (array_key_exists(\$classname, self::\$classMap_)) {
-        require_once (dirname(__FILE__).'/'.self::\$classMap_[\$classname]);
+        require_once (self::\$prefixDir.'/'.self::\$classMap_[\$classname]);
 				return true;
 			}
 
