@@ -37,5 +37,5 @@ class Utils {
 
   static public $topDir;
 
-  static public $showError = false;
+  static public $errorFiles = [];
 }

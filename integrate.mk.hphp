@@ -10,7 +10,7 @@ $common_FILES = [
   , 'Main.php'
   , 'MkFileReader.inc'
   , 'Utils.inc'
-  , '*.inc' //only use in protobuffer
+  , '*.inc'
 ];
 
 $development_FILES = [];

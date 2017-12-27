@@ -151,10 +151,7 @@ EOF;
         }
       }
       if (count($files[$i]) == count($files[$j])) {
-        Log::error("如下文件出现集成错误, 可能原因:1、存在循环依赖或者少加入了依赖文件, 请重点检查extends or implement 类的依赖; 或者2、文件代码有误, 不能执行成功");
-        foreach ($files[$i] as $k => $v) {
-          Log::error($k);
-        }
+        Utils::$errorFiles = $files[$i];
         return false;
       }
       $i = ($i == 0)? 1 : 0;
@@ -178,11 +175,7 @@ EOF;
     switch ($pid) {
       case -1: Log::error("pcntl_fork failed"); return 1;
       case 0 : {
-        if (Utils::$showError) {
-          error_reporting(E_ALL);
-        } else {
-          error_reporting(0);
-        }
+        error_reporting(0);
         include_once $srcfile;
         exit(0);
       }

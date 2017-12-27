@@ -12,7 +12,7 @@ require_once ("Utils.inc");
 
 class Main {
   static public function run() {
-    $opt = getopt("hvwec:l:");
+    $opt = getopt("hvwc:l:");
 
     $topDirStr = "integrate.conf.hphp";
 
@@ -66,7 +66,6 @@ Usage:  option
   option: -h show this help;
           -c conf file name;
           -v show version;
-          -e show error log;
           -w show path;
           -l only output class loader to path
               , relative to top dir
@@ -86,10 +85,6 @@ EOF;
 
     if (array_key_exists('c', $opt)) {
       $topDirStr = $opt['c'];
-    }
-
-    if (array_key_exists('e', $opt)) {
-      Utils::$showError = true;
     }
 
     if (array_key_exists('l', $opt)) {
@@ -130,4 +125,12 @@ EOF;
 
 }
 
-exit (Main::run());
+$result = Main::run();
+if ($result != 0) {
+  error_reporting(E_ALL);
+  foreach (Utils::$errorFiles as $key=>$value) {
+    include_once $key;
+  }
+}
+
+exit ($result);
