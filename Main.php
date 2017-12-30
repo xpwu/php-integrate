@@ -44,8 +44,10 @@ class Main {
     }
 
     if ($onlyClassLoaderPath != "") {
-      if (! $integrater->onlyOutputAutoLoader($topDir
-        ."/".$onlyClassLoaderPath)) {
+      if (substr($onlyClassLoaderPath, 0, 1) != "/") {
+        $onlyClassLoaderPath = $topDir."/".$onlyClassLoaderPath;
+      }
+      if (! $integrater->onlyOutputAutoLoader($onlyClassLoaderPath)) {
         return 1;
       }
     }
@@ -56,7 +58,7 @@ class Main {
       }
     }
 
-    echo "---success---\n";
+//    echo "---success---\n";
     return 0;
   }
 
@@ -68,7 +70,7 @@ Usage:  option
           -v show version;
           -w show path;
           -l only output class loader to path
-              , relative to top dir
+              , relative to top dir or absolute dir
               , and filename is AutoLoader.inc.
 EOF;
 
@@ -92,7 +94,7 @@ EOF;
     }
 
     if (array_key_exists('v', $opt)) {
-      echo "phpinte 0.6".PHP_EOL;
+      echo "phpinte 0.7".PHP_EOL;
       return false;
     }
 
