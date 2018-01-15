@@ -50,7 +50,7 @@ class $className {
 
 			if (array_key_exists(\$classname, self::\$excludeClassMap_)) {
         require_once (self::\$excludeClassMap_[\$classname]);
-				return true;
+				return class_exists(\$classname, false);
 			}
 
 			return false;
@@ -107,6 +107,14 @@ EOF;
 
     foreach (Utils::$classLoader as $key => $value) {
       require_once Utils::$topDir.'/'.$value;
+    }
+
+    // 预先加载第三方类，否则下面的类判断可能会误判第三方类的加载路径
+    foreach (Utils::$classLoader_exclude as $key=>$classLoader_exclude) {
+      class_exists($key);
+    }
+    foreach (Utils::$classLoader as $key => $value) {
+      class_exists($key);
     }
 
     if (!function_exists("pcntl_fork")) {

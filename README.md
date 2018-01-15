@@ -57,10 +57,11 @@ __注意：__需要在php.ini中指定正确的include_path保证能加载文件
 3. 自己写中间文件通过`require_once`命令加载第三方包。  
 第三方包不在phar中使用，`$common_NOT_CHECK_FILES=[]`打包自己写的中间文件，`$require_once_FILES = []`加载自己写的中间文件，在中间文件的 `require_once`中包括第三方包，一样需要保证`require_once`在打包和运行环境中都能正确的找到第三方包。  
      
-**特备说明**  
+**特别说明**  
  
-如果第三方代码中，没有定义需要提前加载的全局变量，建议使用`$classLoader_XXX=[]`替换`$require_once_XXX = []`。`$classLoader`方式支持惰性加载，配置方式为"类名"=>"文件名"。替换规则为：`$require_once_FILES = []`替换为`$classLoader=[]`；`$require_once_exclude_FILES = []`替换为`$classLoader_exclude = []`
-   
+如果第三方代码中，没有定义需要提前加载的全局变量，建议使用`$classLoader_XXX=[]`替换`$require_once_XXX = []`。`$classLoader`方式支持惰性加载，配置方式为"类名"=>"文件名"，文件名一般为第三方代码的入口文件。替换规则为：`$require_once_FILES = []`替换为`$classLoader=[]`；`$require_once_exclude_FILES = []`替换为`$classLoader_exclude = []`
+ 
+**_非常重要:_**非常建议使用`$classLoader`的方式。当自己定义的类继承于三方类时，`$require_once`可能造成三方类的加载文件出错。后续版本会逐步取消`$require_once`方式。
 
 ## mk配置中的参数:
 
