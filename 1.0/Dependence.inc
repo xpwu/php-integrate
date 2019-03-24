@@ -19,7 +19,9 @@ interface Dependence {
   /**
    * @return array [Dependence]
    */
-  function getDependencies():array ;
+  function getSubDependencies():array ;
+
+  function getAllFiles():array ;
 
   function getName():string ;
   function getVersion():string ;

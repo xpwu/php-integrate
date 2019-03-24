@@ -10,6 +10,8 @@ namespace Inte\Config;
 
 
 class Config {
+  function __construct(string $confFile) {
+  }
 
   /**
    * @var array [string]

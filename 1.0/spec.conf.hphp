@@ -5,3 +5,11 @@
  * Date: 2019/3/23
  * Time: 8:13 PM
  */
+
+$name;
+$version;
+
+$dependencies=[];
+
+$annotationServer;
+

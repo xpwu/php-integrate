@@ -10,17 +10,31 @@ namespace Inte;
 
 
 class DependenceProcessor {
-  function __construct(array $dependencies) {
+  function __construct(string $repo, array $dependencies) {
   }
 
   public function checkDependencies():bool {
 
   }
 
-  /**
-   * @return array  [libName => Dependence]
-   */
-  public function mergeDependencies():array {
+  public function mergeDependencies() {
 
   }
+
+  public function loadDependencies() {
+
+  }
+
+  public function printDependencies() {
+
+  }
+
+  /**
+   * @param string $targetDir
+   * @return [class=>file]
+   */
+  public function buildDependencies(string $buildDir):array {
+
+  }
+
 }
