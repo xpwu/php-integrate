@@ -16,7 +16,9 @@ class Config {
   /**
    * @var array [string]
    */
-  public $srcDir = [];
+  public $src = [];
+
+  public $exclude_src = [];
 
   /**
    * @var array [string]

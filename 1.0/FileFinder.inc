@@ -11,21 +11,42 @@ namespace Inte;
 
 class FileFinder {
 
-  function __construct(string $pattern) {
-    $this->pattern_ = $pattern;
+  function __construct(string $topDir, array $patterns, array $excludes = []) {
+    $this->patterns_ = $patterns;
+    $this->excludes_ = $excludes;
+    $this->topDir_ = $topDir;
   }
 
   /**
    * @return array [string]
    */
   public function getAllFile():array {
-    $files = glob($this->pattern_, GLOB_BRACE);
-    if (!$files) {
-      $files = [];
+    $pwd = getcwd();
+    chdir($this->topDir_);
+
+    $allFiles = [];
+    foreach ($this->patterns_ as $pattern) {
+      $files = glob($pattern, GLOB_BRACE);
+      $allFiles = array_merge($allFiles, $files);
     }
 
-    return $files;
+    $allFiles = array_unique($allFiles);
+
+    $excludeFiles = [];
+
+    foreach ($this->excludes_ as $pattern) {
+      $files = glob($pattern, GLOB_BRACE);
+      $excludeFiles = array_merge($excludeFiles, $files);
+    }
+
+    $excludeFiles = array_unique($excludeFiles);
+
+    chdir($pwd);
+
+    return array_diff($allFiles, $excludeFiles);
   }
 
-  private $pattern_;
+  private $patterns_;
+  private $excludes_;
+  private $topDir_;
 }

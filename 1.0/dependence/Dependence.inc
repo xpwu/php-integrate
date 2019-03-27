@@ -14,7 +14,7 @@ interface Dependence {
    * @return array  [className=>file]
    */
   function getClasses():array ;
-  function getRequireFile():string ;
+  function getRequireFile():array ;
 
   /**
    * @return array [Dependence]
@@ -23,6 +23,9 @@ interface Dependence {
 
   function getAllFiles():array ;
 
+  function getTopDir():string ;
+
   function getName():string ;
   function getVersion():string ;
+  function getRepo():string ;
 }

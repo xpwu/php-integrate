@@ -13,11 +13,18 @@ class DependenceProcessor {
   function __construct(string $repo, array $dependencies) {
   }
 
-  public function checkDependencies():bool {
+  private function checkDependencies() {
 
   }
 
   public function mergeDependencies() {
+
+  }
+
+  /**
+   * @return array  [Dependence]
+   */
+  public function getMergeResult():array {
 
   }
 
@@ -29,12 +36,12 @@ class DependenceProcessor {
 
   }
 
-  /**
-   * @param string $targetDir
-   * @return [class=>file]
-   */
-  public function buildDependencies(string $buildDir):array {
-
-  }
+//  /**
+//   * @param string $targetDir
+//   * @return [class=>file]
+//   */
+//  public function buildDependencies(string $buildDir):array {
+//
+//  }
 
 }

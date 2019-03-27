@@ -9,26 +9,49 @@
 namespace Inte;
 
 use Inte\Config\Config;
+use Inte\Error\NormalError;
+use Inte\Error\OK;
+use Inte\Error\Warning;
 
 class Main {
   private function prepare() {
+    if (!function_exists("pcntl_fork")) {
+      throw new NormalError("must load extension : 'pcntl' ");
+    }
 
+    if (!\Phar::canWrite()) {
+      throw new NormalError("'phar.readonly' must be'false' in php.ini ");
+    }
   }
 
-  static public function run() {
-    $main = new Main();
+  static public function main() {
+    try {
+      $main = new Main();
 
-    $main->prepare();
+      $main->prepare();
 
-    $options = new Options();
+      $options = new Options();
 
-    Project::getInstance()->init(new Config($options->getRootDir()
-        . DIRECTORY_SEPARATOR . $options->getConfigFileName())
-      , $options->getRootDir());
+      Project::getInstance()->init(new Config($options->getRootDir()
+          . DIRECTORY_SEPARATOR . $options->getConfigFileName())
+        , $options->getRootDir());
 
 
-    exit($options->getCommand()->run()->toValue());
+      $options->getCommand()->run();
+
+      exit(0);
+
+    } catch (OK $error) {
+      exit(0);
+    } catch (NormalError $error) {
+      echo $error;
+      exit($error->getExitStatus());
+    } catch (Warning $warning) {
+      echo $warning;
+      exit(0);
+    }
+
   }
 }
 
-Main::run();
+Main::main();

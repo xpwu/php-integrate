@@ -25,7 +25,7 @@ class Project {
     $this->conf = $config;
     $this->rootDir = $rootDir;
     // todo: 初始化 build 目录
-
+    // TODO: 初始化 各个变量
   }
 
   private function __construct() {
@@ -39,8 +39,24 @@ class Project {
     return $this->dependenceProcessor;
   }
 
-  public function getAnnotationDir():string {
+  public function getAnnotationOutputDir():string {
     return $this->rootDir . Project::buildAnnotationDir;
+  }
+
+  public function getAnnotationProcessor():array {
+    return $this->annotationProcessor;
+  }
+
+  public function getAnnotationDependenceProcessor():DependenceProcessor {
+    return $this->annotationDependenceProcessor;
+  }
+
+  public function getBuildOutputTempDir():string {
+
+  }
+
+  public function getRootDir():string {
+    return $this->rootDir;
   }
 
   /**
@@ -53,7 +69,15 @@ class Project {
    */
   private $conf;
 
+  /**
+   * @var array  [string]
+   */
+  private $projectFiles = [];
 
+
+  /**
+   * @var array [AnnotationProcessor]
+   */
   private $annotationProcessor = [];
 
   /**

@@ -11,13 +11,14 @@ namespace Inte;
 
 class AnnotationCompiler {
   function __construct(array $annotationProcessor
-    , DependenceProcessor $dependenceProcessor) {
+    , DependenceProcessor $dependenceProcessor
+    , string $buildAnnotationDir) {
   }
 
   /**
    * @return array file [string]
    */
-  public function compile(string $buildAnnotationDir):array {
+  public function compile(array $classFile):array {
 
   }
 }
