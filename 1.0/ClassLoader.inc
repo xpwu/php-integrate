@@ -63,6 +63,14 @@ EOF;
 
   }
 
+  public function getArrayVarString():string {
+    return $this->libName_ . '\ClassLoader::AllClasses';
+  }
+
+  public function getFile():string {
+    return $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
+  }
+
   private $dir_;
   private $libName_;
 

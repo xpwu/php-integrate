@@ -25,7 +25,7 @@ class Project {
     $this->conf = $config;
     $this->rootDir = $rootDir;
     // todo: 初始化 build 目录
-    // TODO: 初始化 各个变量
+    // TODO: 初始化 各个变量 并检查
   }
 
   private function __construct() {
@@ -40,7 +40,7 @@ class Project {
   }
 
   public function getAnnotationOutputDir():string {
-    return $this->rootDir . Project::buildAnnotationDir;
+    return Project::buildAnnotationDir;
   }
 
   public function getAnnotationProcessor():array {

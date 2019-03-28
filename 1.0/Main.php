@@ -39,6 +39,7 @@ class Main {
 
       $options->getCommand()->run();
 
+      echo "----SUCCESS----".PHP_EOL.PHP_EOL;
       exit(0);
 
     } catch (OK $error) {

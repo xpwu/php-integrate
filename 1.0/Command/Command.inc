@@ -72,7 +72,7 @@ abstract class Command {
       throw new NormalError("-----Error!!!------");
     }
 
-    $this->allClasses_ = $allClasses;
+    $this->allProjectClasses_ = $allClasses;
 
     $this->output();
   }
@@ -88,5 +88,5 @@ abstract class Command {
   /**
    * @var array
    */
-  protected $allClasses_;
+  protected $allProjectClasses_;
 }
