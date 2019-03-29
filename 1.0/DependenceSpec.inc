@@ -22,15 +22,21 @@ class DependenceSpec {
   }
 
   public function write(string $name, string $version
-    , array $dependencies, ?string $annotationServer = null) {
+    , array $dependencies, array $annotationServer = []) {
     $arr = "";
     foreach ($dependencies as $dependence) {
       $arr = $arr . $dependence . ", ";
     }
 
     $annServer = "";
-    if (!$annotationServer) {
-      $annServer = "\$annotationServer = $annotationServer";
+    if (count($annotationServer) != 0) {
+      $annServer = "\$annotationServer = [";
+    }
+    foreach ($annotationServer as $item) {
+      $annServer = $annServer . $item . ", ";
+    }
+    if (count($annotationServer) != 0) {
+      $annServer = "];";
     }
 
     $content = <<<EOF
@@ -53,7 +59,7 @@ EOF;
    * @return array [key=>value]
    */
   public function read():array {
-    $annotationServer = null;
+    $annotationServer = [];
     $dependencies = [];
 
     require_once $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
@@ -61,9 +67,8 @@ EOF;
     $ret = [self::NameKey=>$name, self::VersionKey=>$version
       , self::DependenciesKey=>$dependencies];
 
-    if ($annotationServer) {
-      $ret[self::AnnotationServerKey] = $annotationServer;
-    }
+    $ret[self::AnnotationServerKey] = $annotationServer;
+
 
     return $ret;
   }
