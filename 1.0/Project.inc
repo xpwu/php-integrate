@@ -24,6 +24,7 @@ class Project {
   public function init(Config $config, string $rootDir) {
     $this->conf = $config;
     $this->rootDir = $rootDir;
+    set_include_path($rootDir . PATH_SEPARATOR . get_include_path());
     // todo: 初始化 build 目录
     // TODO: 初始化 各个变量 并检查
   }
