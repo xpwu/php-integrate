@@ -18,6 +18,11 @@ class SourceParser {
 
   public function parse() {
 
+    if ($this->parsed_) {
+      return;
+    }
+    $this->parsed_ = true;
+
     $shm_id = ftok(__FILE__,'SourceParser');
     $shareMemory = shm_attach($shm_id);
     define('MayBeFailedIndex', 1);
@@ -118,4 +123,6 @@ class SourceParser {
   private $files_ = [];
   private $result_ = [];
   private $noParseFile_ = [];
+
+  private $parsed_ = false;
 }
