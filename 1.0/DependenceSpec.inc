@@ -23,20 +23,12 @@ class DependenceSpec {
 
   public function write(string $name, string $version
     , array $dependencies, array $annotationServer = []) {
-    $arr = "";
-    foreach ($dependencies as $dependence) {
-      $arr = $arr . $dependence . ", ";
-    }
+    $arr = implode(",", $dependencies);
 
     $annServer = "";
     if (count($annotationServer) != 0) {
-      $annServer = "\$annotationServer = [";
-    }
-    foreach ($annotationServer as $item) {
-      $annServer = $annServer . $item . ", ";
-    }
-    if (count($annotationServer) != 0) {
-      $annServer = "];";
+      $annServer = "\$annotationServer = ["
+        . implode(",", $annotationServer) . "]";
     }
 
     $content = <<<EOF
