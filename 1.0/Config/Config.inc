@@ -11,6 +11,7 @@ namespace Inte\Config;
 
 class Config {
   function __construct(string $confFile) {
+    // todo: 全部都是相对路径
   }
 
   /**
@@ -19,6 +20,8 @@ class Config {
   public $src = [];
 
   public $exclude_src = [];
+
+  public $annoAndDepRepo = "";
 
   /**
    * @var array [string]
