@@ -12,6 +12,7 @@ namespace Inte\Dependence;
 use Inte\ClassLoader;
 use Inte\Dependence;
 use Inte\DependenceSpec;
+use Inte\Error\NormalError;
 use Inte\FileFinder;
 
 class LibNameVersion implements Dependence {
@@ -25,6 +26,10 @@ class LibNameVersion implements Dependence {
     $arr = explode(":", $lib_version);
     $this->libName_ = $arr[0];
     $this->version_ = $arr[1];
+
+    // check
+    $spec = new DependenceSpec($this->getTopDir());
+    $spec->checkIsADependence();
   }
 
   // todo: 后面增加库文件下载与上传处理器，路径应该由此处理器提供
@@ -54,14 +59,18 @@ class LibNameVersion implements Dependence {
    * @return array [Dependence]
    */
   function getSubDependencies(): array {
-    $spec = new DependenceSpec($this->getTopDir());
-    $ret = [];
-
-    foreach ($spec->read()[DependenceSpec::DependenciesKey] as $value) {
-      $ret[] = Factory::getDependence($this->getRepo(), $value);
+    if (isset($this->subDependencies_)) {
+      return $this->subDependencies_;
     }
 
-    return $ret;
+    $spec = new DependenceSpec($this->getTopDir());
+    $this->subDependencies_ = [];
+
+    foreach ($spec->read()[DependenceSpec::DependenciesKey] as $value) {
+      $this->subDependencies_[] = Factory::getDependence($this->getRepo(), $value);
+    }
+
+    return $this->subDependencies_;
   }
 
   function getAllFiles(): array {
@@ -81,4 +90,5 @@ class LibNameVersion implements Dependence {
   private $libName_;
   private $version_;
 
+  private $subDependencies_ = null;
 }
