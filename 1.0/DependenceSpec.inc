@@ -9,6 +9,8 @@
 namespace Inte;
 
 
+use Inte\Error\NormalError;
+
 class DependenceSpec {
   public const NameKey = "name";
   public const VersionKey = "version";
@@ -51,19 +53,44 @@ EOF;
    * @return array [key=>value]
    */
   public function read():array {
+    if ($this->result_ !== null) {
+      return $this->result_;
+    }
+
     $annotationServer = [];
     $dependencies = [];
 
     require_once $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
 
-    $ret = [self::NameKey=>$name, self::VersionKey=>$version
+    $this->result_ = [self::NameKey=>$name, self::VersionKey=>$version
       , self::DependenciesKey=>$dependencies];
 
-    $ret[self::AnnotationServerKey] = $annotationServer;
+    $this->result_[self::AnnotationServerKey] = $annotationServer;
 
 
-    return $ret;
+    return $this->result_;
+  }
+
+  public function checkIsADependence():void {
+    $ret = $this->read();
+
+    $annServer = $ret[self::AnnotationServerKey];
+    if ($annServer != null && count($annServer) != 0) {
+      throw new NormalError($ret[self::NameKey] ." [@${ret[self::VersionKey]}]"
+        . " is a Annotation Processor, which can Not be a dependence.");
+    }
+  }
+
+  public function checkIsAAnnotationProcessor():void {
+    $ret = $this->read();
+
+    $annServer = $ret[self::AnnotationServerKey];
+    if ($annServer != null || count($annServer) != 0) {
+      throw new NormalError($ret[self::NameKey] ." [@${ret[self::VersionKey]}]"
+        . " is Not a Annotation Processor, which has Not any annotationServer supported.");
+    }
   }
 
   private $dir_;
+  private $result_ = null;
 }
