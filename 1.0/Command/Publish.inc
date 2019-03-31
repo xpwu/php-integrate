@@ -32,14 +32,15 @@ class Publish extends Command {
     $allServices = $project->getConfig()->publishConfig->annotationServices;
     foreach ($allServices as $service) {
       $serviceClass = new \ReflectionClass($service);
-      if (!$serviceClass->isSubclassOf(\Inte\Annotation\AbstractProcessor::class)) {
+      if (!$serviceClass->isSubclassOf(\Inte\Annotation\AbstractAnnotationServer::class)) {
         throw new NormalError($service
           . " is not a annotationService, which must be subclass of "
-          . \Inte\Annotation\AbstractProcessor::class);
+          . \Inte\Annotation\AbstractAnnotationServer::class);
       }
     }
 
 
+    // todo: 检查类与依赖的类是否有重复定义
     $pwd = getcwd();
     chdir($project->getRootDir());
     $classLoader = new ClassLoader($dir, $name);

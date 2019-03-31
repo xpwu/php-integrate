@@ -13,7 +13,7 @@ use Inte\Config\Config;
 use Inte\Logger;
 
 
-abstract class AbstractProcessor {
+abstract class AbstractAnnotationServer {
   function init(Logger $logger, PhpFiler $filer, Config $config):void {}
 
   abstract function process(array $classes):void;

@@ -9,8 +9,16 @@
 
 namespace Inte;
 
+/**
+ *
+ * 路径规则：
+ *  ClassLoader 中的文件路径都是相对于classLoader文件的路径
+ *  建议classLoader文件的路径就为库的根路径
+ *
+ */
+
 class ClassLoader {
-  private const FileName = "ClassLoader.inc";
+  private const FileName = ".__InteClassLoader__.inc";
 
   function __construct(string $dir, string $libName = "Project") {
     $this->dir_ = $dir;

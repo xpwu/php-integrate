@@ -11,16 +11,19 @@ namespace Inte\Annotation;
 
 class PhpFiler {
   public function __construct(string $outputDir) {
-    $this->outputDir = $outputDir;
+    $this->outputDir_ = $outputDir;
   }
 
   public function createSourceFile(string $fileDirAndName) {
     if ($this->fd) {
       fclose($this->fd);
     }
-    $this->fileDirAndName = $fileDirAndName;
-    $this->fd = fopen($this->outputDir
-      . DIRECTORY_SEPARATOR . $this->fileDirAndName, "w");
+
+    $dir = $this->outputDir_ .DIRECTORY_SEPARATOR. dirname($fileDirAndName);
+    mkdir($dir, 0777, true);
+
+    $this->fd = fopen($this->outputDir_
+      . DIRECTORY_SEPARATOR . $fileDirAndName, "w");
   }
 
   public function append(string $content) {
@@ -33,8 +36,7 @@ class PhpFiler {
     }
   }
 
-  private $fileDirAndName;
-  private $outputDir;
+  private $outputDir_;
 
   private $fd = null;
 }

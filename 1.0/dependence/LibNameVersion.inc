@@ -21,15 +21,17 @@ class LibNameVersion implements Dependence {
     return strpos($dependenceStr, ":") !== false;
   }
 
-  function __construct(string $repo, string $lib_version) {
+  function __construct(string $repo, string $lib_version, bool $isAAnnoProcessor = false) {
     $this->repo_ = $repo;
     $arr = explode(":", $lib_version);
     $this->libName_ = $arr[0];
     $this->version_ = $arr[1];
 
     // check
-    $spec = new DependenceSpec($this->getTopDir());
-    $spec->checkIsADependence();
+    if (!$isAAnnoProcessor) {
+      $spec = new DependenceSpec($this->getTopDir());
+      $spec->checkIsADependence();
+    }
   }
 
   // todo: 后面增加库文件下载与上传处理器，路径应该由此处理器提供
@@ -48,10 +50,12 @@ class LibNameVersion implements Dependence {
    */
   function getClasses(): array {
     $classLoader = new ClassLoader($this->getTopDir(), $this->getName());
-    return $classLoader->read();
+    return array_map(function ($file){
+      return $this->getTopDir() . DIRECTORY_SEPARATOR . $file;
+    }, $classLoader->read());
   }
 
-  function getRequireFile(): array {
+  function getRequireFiles(): array {
     return [];
   }
 
@@ -74,8 +78,10 @@ class LibNameVersion implements Dependence {
   }
 
   function getAllFiles(): array {
-    $fileFinder = new FileFinder($this->getTopDir(), ['**']);
-    return $fileFinder->getAllFile();
+    $fileFinder = new FileFinder($this->getTopDir(), ['**'], [DependenceSpec::getFileName()]);
+    return array_map(function ($file){
+      return $this->getTopDir(). DIRECTORY_SEPARATOR . $file;
+    }, $fileFinder->getAllFile());
   }
 
   function getName(): string {

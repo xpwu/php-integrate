@@ -47,11 +47,7 @@ class Main {
     } catch (NormalError $error) {
       echo $error;
       exit($error->getExitStatus());
-    } catch (Warning $warning) {
-      echo $warning;
-      exit(0);
     }
-
   }
 }
 

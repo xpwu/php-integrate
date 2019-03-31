@@ -21,12 +21,34 @@ class DependenceProcessor {
     }
   }
 
+  /**
+   * @param Dependence[] $dependence
+   */
+  public function appendDependence(array $dependencies) {
+    $this->dependencies_[] = array_merge($this->dependencies_[], $dependencies);
+
+    if (!$this->hasMerged()) {
+      return;
+    }
+
+    $this->reMergeDependencies();
+  }
+
+  private function hasMerged():bool {
+    return isset($this->mergedNameDependenceMap_);
+  }
+
+  private function reMergeDependencies() {
+    $this->mergedNameDependenceMap_ = null;
+    $this->mergeDependencies();
+  }
+
   private function checkDependenceClass() {
     $allClasses = [];
     /**
      * @var $dependency Dependence
      */
-    foreach ($this->mergedDependencies_ as $name => $dependency) {
+    foreach ($this->mergedNameDependenceMap_ as $name => $dependency) {
       foreach (array_keys($dependency->getClasses()) as $class) {
         if (!array_key_exists($class, $allClasses)) {
           $allClasses[$class] = $name;
@@ -44,71 +66,100 @@ class DependenceProcessor {
   }
 
   public function mergeDependencies() {
-    if (isset($this->mergedDependencies_)) {
+    if ($this->hasMerged()) {
       return;
     }
 
-    $allDependencies = $this->dependencies_;
+    $allDependencies = [];
 
     /**
      * @var $value Dependence
      */
     foreach ($this->dependencies_ as $value) {
-      $this->traverseDeepFirstly($allDependencies, $value);
+      $this->postOrderTraversal($allDependencies, $value);
     }
 
-    $this->mergedDependencies_ = [];
+    $this->mergedNameDependenceMap_ = [];
     /**
      * @var $dependency Dependence
      */
     foreach ($allDependencies as $dependency) {
-      if (!array_key_exists($dependency->getName(), $this->mergedDependencies_)) {
-        $this->mergedDependencies_[$dependency->getName()] = $dependency;
+      if (!array_key_exists($dependency->getName(), $this->mergedNameDependenceMap_)) {
+        $this->mergedNameDependenceMap_[$dependency->getName()] = $dependency;
         continue;
       }
 
       /**
        * @var $old Dependence
        */
-      $old = $this->mergedDependencies_[$dependency->getName()];
+      $old = $this->mergedNameDependenceMap_[$dependency->getName()];
       if (version_compare($old->getVersion()
         , $dependency->getVersion(), '>=')) {
         continue;
       }
 
-      $this->mergedDependencies_[$dependency->getName()] = $dependency;
+      $this->mergedNameDependenceMap_[$dependency->getName()] = $dependency;
     }
 
     $this->checkDependenceClass();
   }
 
-  private function traverseDeepFirstly(array &$allDependencies
+  private function postOrderTraversal(array &$allDependencies
     , Dependence $dependence) {
     $subDep = $dependence->getSubDependencies();
 
     foreach ($subDep as $value) {
-      $allDependencies[] = $value;
-      $this->traverseDeepFirstly($allDependencies, $value);
+      $this->postOrderTraversal($allDependencies, $value);
     }
+    $allDependencies[] = $dependence;
   }
 
   /**
    * @return array  [Dependence]
    */
   public function getMergeResult():array {
-    return array_values($this->mergedDependencies_);
+    return array_values($this->mergedNameDependenceMap_);
+  }
+
+  public function updateVersionByOther(DependenceProcessor $other) {
+    if (!isset($this->mergedNameDependenceMap_)
+      || !isset($other->mergedNameDependenceMap_)) {
+      throw new \Exception("DependenceProcessor has not merged");
+    }
+
+    /**
+     * @var $intersect Dependence[]
+     */
+    $intersect = array_intersect_key($this->mergedNameDependenceMap_
+      , $other->mergedNameDependenceMap_);
+
+    $reset = false;
+    foreach ($intersect as $name => $dependence) {
+      if (version_compare($this->mergedNameDependenceMap_[$name]->getVersion()
+        , $other->mergedNameDependenceMap_[$name]->getVersion(), "<")) {
+        $this->mergedNameDependenceMap_[$name] = $other->mergedNameDependenceMap_[$name];
+        $reset = true;
+      }
+    }
+
+    if ($reset) {
+      $this->checkDependenceClass();
+    }
   }
 
   public function loadDependencies() {
-    set_include_path($this->repo_
-      . PATH_SEPARATOR . get_include_path());
 
     $allClasses = [];
     /**
      * @var $dependency Dependence
      */
-    foreach ($this->mergedDependencies_ as $dependency) {
+    foreach ($this->mergedNameDependenceMap_ as $name=> $dependency) {
+
       $allClasses = array_merge($allClasses, $dependency->getClasses());
+
+      foreach ($dependency->getRequireFiles() as $item) {
+        require_once($item);
+      }
     }
 
     spl_autoload_register(function (string $class) use ($allClasses) {
@@ -129,8 +180,8 @@ class DependenceProcessor {
 
   private function printDeepFirstly(string $prefix, Dependence $dependence) {
     echo $prefix . "--"
-      . $dependence->getName() . '@' . $dependence->getVersion()
-      . " -> " . $this->mergedDependencies_[$dependence->getName()]->getVersion()
+      . $dependence->getName() . ':' . $dependence->getVersion()
+      . " -> " . $this->mergedNameDependenceMap_[$dependence->getName()]->getVersion()
       . PHP_EOL;
 
     foreach ($dependence->getSubDependencies() as $subDependency) {
@@ -148,5 +199,5 @@ class DependenceProcessor {
   /**
    * @var Dependence[]
    */
-  private $mergedDependencies_ = null;
+  private $mergedNameDependenceMap_ = null;
 }

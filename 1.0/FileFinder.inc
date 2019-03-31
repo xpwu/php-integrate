@@ -8,6 +8,13 @@
 
 namespace Inte;
 
+/**
+ *
+ * 路径信息：
+ *  相对于 topDir 的路径
+ *
+ */
+
 
 class FileFinder {
 

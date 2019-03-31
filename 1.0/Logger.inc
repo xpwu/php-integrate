@@ -9,15 +9,13 @@
 namespace Inte;
 
 
+use Inte\Error\NormalError;
+
 class Logger {
 
-  public function __construct(LogStatus $status) {
-    $this->status = $status;
-  }
-
   public function error(string $msg):void {
-    $this->hasError = true;
-    echo "ERROR: " . $msg . PHP_EOL;
+//    echo "ERROR: " . $msg . PHP_EOL;
+    throw new NormalError($msg);
   }
 
   public function warn(string $msg):void {
@@ -31,6 +29,4 @@ class Logger {
 //  public function debug(string $msg):void {
 //    echo "DEBUG: " . $msg . PHP_EOL;
 //  }
-
-  private $status;
 }

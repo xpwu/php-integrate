@@ -27,6 +27,7 @@ class Build extends Command {
      */
     $project = Project::getInstance();
 
+    // todo: 检查类是否重复定义
     $allClass = $this->allProjectClasses_;
     /**
      * @var $value Dependence

@@ -70,6 +70,7 @@ class SourceParser {
     }while(count($loadedFiles) != 0);
 
     $this->noParseFile_ = $nowFiles;
+    shm_detach($shareMemory);
   }
 
   private function checkAndLoadAFile(string $file) {

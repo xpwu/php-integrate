@@ -17,7 +17,7 @@ class DependenceSpec {
   public const DependenciesKey = "dependencies";
   public const AnnotationServerKey = "annotationServer";
 
-  private const FileName = "spec.conf.hphp";
+  private const FileName = "__spec.conf__.hphp";
 
   function __construct(string $dir) {
     $this->dir_ = $dir;
@@ -69,6 +69,10 @@ EOF;
 
 
     return $this->result_;
+  }
+
+  static public function getFileName():string {
+    return self::FileName;
   }
 
   public function checkIsADependence():void {

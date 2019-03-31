@@ -16,6 +16,7 @@ use Inte\Error\Warning;
 abstract class Command {
   public function run():void {
     $project = Project::getInstance();
+    $logger = new Logger();
 
     // 加载项目的依赖
     $depPro = $project->getDependenceProcessor();
@@ -23,21 +24,23 @@ abstract class Command {
     $depPro->loadDependencies();
 
     // 加载本项目文件
-    $fileFinder = new FileFinder($project->getRootDir(), $project->getConfig()->src
-      , $project->getConfig()->exclude_src);
-    $allProjectFile = $fileFinder->getAllFile();
+//    $fileFinder = new FileFinder($project->getRootDir(), $project->getConfig()->src
+//      , $project->getConfig()->exclude_src);
+//    $allProjectFile = $fileFinder->getAllFile();
+    $allProjectFile = $project->getProjectAllFiles();
 
-    if (count($allProjectFile) == 0) {
-      throw new Warning("Not find any file!");
-    }
+//    if (count($allProjectFile) == 0) {
+//      $logger->warn("Not find any file!");
+//    }
 
-    //准备注解的依赖
-    $annoDependence = $project->getAnnotationDependenceProcessor();
-    $annoDependence->mergeDependencies();
+    $annoCompiler = $project->getAnnotationCompiler();
+    $annoCompiler->init();
+    $annoDepProcessor = $annoCompiler->getDependenceProcessor();
+    $annoDepProcessor->mergeDependencies();
 
-    $annoCompiler = new AnnotationCompiler($project->getAnnotationProcessor()
-      , $project->getAnnotationDependenceProcessor()
-      , $project->getAnnotationOutputDir());
+    $depPro->updateVersionByOther($annoDepProcessor);
+    $annoDepProcessor->updateVersionByOther($depPro);
+
 
     /**
      * @var [class=>file]
@@ -69,7 +72,7 @@ abstract class Command {
     if (count($allProjectFile) != 0) {
       // 输出编译错误
       $this->printPhpFileError($allProjectFile);
-      throw new NormalError("-----Error!!!------");
+      throw new NormalError("-----Failed!!!------");
     }
 
     $this->allProjectClasses_ = $allClasses;
