@@ -11,7 +11,6 @@ namespace Inte;
 
 use Inte\Annotation\AbstractAnnotationServer;
 use Inte\Annotation\PhpSimpleFiler;
-use Inte\Annotation\PhpSimpleFileWriter;
 use Inte\Error\NormalError;
 
 class AnnotationCompiler {
