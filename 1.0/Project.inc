@@ -36,19 +36,11 @@ class Project {
     return $this->conf;
   }
 
-  public function getDependenceProcessor():DependenceProcessor {
-    return $this->dependenceProcessor;
-  }
-
   public function getAnnotationOutputDir():string {
     return Project::buildAnnotationDir;
   }
 
-//  public function getAnnotationProcessor():array {
-//    return $this->annotationProcessor;
-//  }
-
-  public function getBuildOutputTempDir():string {
+  public function getBuildOutputDir():string {
 
   }
 
@@ -57,36 +49,9 @@ class Project {
   }
 
   /**
-   * @return string[]
-   */
-  public function getProjectAllFiles():array {
-
-  }
-
-  public function getAnnotationCompiler():AnnotationCompiler {
-
-  }
-
-  /**
-   * @var DependenceProcessor
-   */
-  private $dependenceProcessor;
-
-  /**
    * @var Config
    */
   private $conf;
-
-  /**
-   * @var array  [string]
-   */
-  private $projectFiles = [];
-
-
-//  /**
-//   * @var AnnotationProcessor[]
-//   */
-//  private $annotationProcessor = [];
 
   private $rootDir = "";
 

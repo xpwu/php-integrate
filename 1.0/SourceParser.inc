@@ -121,6 +121,10 @@ class SourceParser {
     return $this->noParseFile_;
   }
 
+  public function getParsedFileOrderByParsingSequence():array {
+
+  }
+
   private $files_ = [];
   private $result_ = [];
   private $noParseFile_ = [];

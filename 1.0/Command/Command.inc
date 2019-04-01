@@ -10,74 +10,119 @@
 
 namespace Inte;
 
+use Inte\Config\Config;
 use Inte\Error\NormalError;
-use Inte\Error\Warning;
 
 abstract class Command {
   public function run():void {
-    $project = Project::getInstance();
-    $logger = new Logger();
+    $this->project_ = Project::getInstance();
+    $this->logger_ = new Logger();
+    $this->config_ = $this->project_->getConfig();
+    $this->step_ = 0;
 
-    // 加载项目的依赖
-    $depPro = $project->getDependenceProcessor();
-    $depPro->mergeDependencies();
-    $depPro->loadDependencies();
+    $allProjectFiles = $this->findFile();
 
-    // 加载本项目文件
-//    $fileFinder = new FileFinder($project->getRootDir(), $project->getConfig()->src
-//      , $project->getConfig()->exclude_src);
-//    $allProjectFile = $fileFinder->getAllFile();
-    $allProjectFile = $project->getProjectAllFiles();
+    $dependenceProcessor = $this->parseDependence($annoCompiler);
 
-//    if (count($allProjectFile) == 0) {
-//      $logger->warn("Not find any file!");
-//    }
+    $sequenceFilesByCompiler = $this->processAnnotation($allProjectFiles, $annoCompiler);
 
-    $annoCompiler = $project->getAnnotationCompiler();
-    $annoCompiler->init();
-    $annoDepProcessor = $annoCompiler->getDependenceProcessor();
-    $annoDepProcessor->mergeDependencies();
+    $allNeedParseFiles = array_merge($sequenceFilesByCompiler
+      , array_diff($allProjectFiles, $sequenceFilesByCompiler));
+    $this->parseFiles($allNeedParseFiles, $dependenceProcessor);
+  }
 
-    $depPro->updateVersionByOther($annoDepProcessor);
-    $annoDepProcessor->updateVersionByOther($depPro);
+  private function findFile():array {
+    $this->step_++;
+    $this->logger_->info("$this->step_: find file...");
 
+    $fileFinder = new FileFinder($this->project_->getRootDir(), $this->config_->src
+      , $this->config_->exclude_src);
+    $allProjectFiles = $fileFinder->getAllFile();
 
-    /**
-     * @var [class=>file]
-     */
-    $allClasses = [];
-
-    $newFiles = $allProjectFile;
-
-    while (count($newFiles) !== 0) {
-      $sourceParser = new SourceParser($allProjectFile);
-      $sourceParser->parse();
-      $allProjectFile = $sourceParser->getNotParseFile();
-
-      $classes = $sourceParser->getResult();
-      $allClasses = array_merge($allClasses, $classes);
-
-      // 处理注解
-      $newFiles = $annoCompiler->compile($classes);
-      for ($i = 0; $i < count($newFiles); ++$i) {
-        $newFiles[$i] = $project->getAnnotationOutputDir()
-          .DIRECTORY_SEPARATOR. $newFiles[$i];
-      }
-
-      $allProjectFile = array_merge($allProjectFile, $newFiles);
-
+    if (count($allProjectFiles) == 0) {
+      $this->logger_->warn("Not find any file!");
     }
 
-    // 没有处理完
+    $this->postFindFile($allProjectFiles);
+
+    return $allProjectFiles;
+  }
+
+  private function parseDependence(AnnotationCompiler &$compiler): DependenceProcessor {
+    $this->step_++;
+    $this->logger_->info("$this->step_: parse dependence...");
+
+    $dependenceProcessor = new DependenceProcessor(
+      $this->config_->annoAndDepRepo
+      , $this->config_->dependencies);
+    $dependenceProcessor->mergeDependencies();
+    $dependenceProcessor->loadDependencies();
+
+    $compiler = new AnnotationCompiler(
+      $this->config_->annoAndDepRepo
+      , $this->config_->annotationProcessors
+      , $this->project_->getAnnotationOutputDir());
+    $compiler->init();
+    $annoDepProcessor = $compiler->getDependenceProcessor();
+    $annoDepProcessor->mergeDependencies();
+
+    $dependenceProcessor->updateVersionByOther($annoDepProcessor);
+    $annoDepProcessor->updateVersionByOther($dependenceProcessor);
+
+    $this->postParseDependence($dependenceProcessor, $compiler);
+
+    return $dependenceProcessor;
+  }
+
+  /**
+   * @param array $allProjectFiles
+   * @return string[] 按照解析顺序的排序的文件
+   */
+  private function processAnnotation(array $allProjectFiles
+    , AnnotationCompiler $compiler):array {
+    $this->step_++;
+    $this->logger_->info("$this->step_: process annotation...");
+    $sequenceFilesByCompiler
+      = $compiler->compile($allProjectFiles);
+    $this->postProcessAnnotation(array_diff($sequenceFilesByCompiler
+      , $allProjectFiles));
+
+    return $sequenceFilesByCompiler;
+  }
+
+  private function parseFiles(array $allNeedParseFiles
+    , DependenceProcessor $processor) {
+    $this->step_++;
+    $this->logger_->info("$this->step_: parse files...");
+    $allProjectFile = $allNeedParseFiles;
+
+    $sourceParser = new SourceParser($allProjectFile);
+    $sourceParser->parse();
+    $allProjectFile = $sourceParser->getNotParseFile();
+
+    // 还有没有解析的文件
     if (count($allProjectFile) != 0) {
       // 输出编译错误
       $this->printPhpFileError($allProjectFile);
       throw new NormalError("-----Failed!!!------");
     }
+    $classFileMap = $sourceParser->getResult();
 
-    $this->allProjectClasses_ = $allClasses;
+    $this->checkAllClass($processor, $classFileMap);
 
-    $this->output();
+    $this->postParseFile($classFileMap, $processor);
+  }
+
+  private function checkAllClass(DependenceProcessor $processor, array $newClasses) {
+    foreach ($processor->getMergeResult() as $dependence) {
+      foreach (array_keys($dependence->getClasses()) as $class) {
+        if (array_key_exists($newClasses, $class)) {
+          throw new NormalError(
+            "$class are again defined both "
+            .$dependence->getName() ." and Project://{$newClasses[$class]}");
+        }
+      }
+    }
   }
 
   private function printPhpFileError($errorFiles) {
@@ -86,10 +131,28 @@ abstract class Command {
     }
   }
 
-  protected abstract function output():void ;
+  protected function postFindFile(array $files):void {}
+  protected function postParseDependence(DependenceProcessor $processor
+    , AnnotationCompiler $compiler):void {}
+  protected function postProcessAnnotation(array $newFiles):void {}
+  protected function postParseFile(array $classFileMap
+    , DependenceProcessor $processor):void {}
 
   /**
-   * @var array
+   * @var Config
    */
-  protected $allProjectClasses_;
+  private $config_;
+  /**
+   * @var Logger
+   */
+  private $logger_;
+  /**
+   * @var int
+   */
+  private $step_;
+  /**
+   * @var Project
+   */
+  private $project_;
+
 }

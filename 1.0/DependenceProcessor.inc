@@ -115,7 +115,7 @@ class DependenceProcessor {
   }
 
   /**
-   * @return array  [Dependence]
+   * @return Dependence[]
    */
   public function getMergeResult():array {
     return array_values($this->mergedNameDependenceMap_);

@@ -12,13 +12,15 @@ namespace Inte\Command;
 use Inte\ClassLoader;
 use Inte\Command;
 use Inte\Dependence;
+use Inte\DependenceProcessor;
 use Inte\Error\NormalError;
 use Inte\Project;
 use Phar;
 
 class Build extends Command {
 
-  protected function output(): void {
+  protected function postParseFile(array $classMap
+    , DependenceProcessor $processor): void {
     /**
      * 1、生成整体的classLoader 包括dependence的
      * 2、加入所有的文件，包括dependence的
@@ -26,31 +28,25 @@ class Build extends Command {
      * 4、写phar  加入 index
      */
     $project = Project::getInstance();
+    $this->processor_ = $processor;
 
-    // todo: 检查类是否重复定义
-    $allClass = $this->allProjectClasses_;
     /**
      * @var $value Dependence
      */
-    foreach ($project->getDependenceProcessor()->getMergeResult() as $value) {
-      $allClass = array_merge($allClass, $value->getClasses());
+    foreach ($this->processor_->getMergeResult() as $value) {
+      $classMap = array_merge($classMap, $value->getClasses());
     }
 
-    $classLoader = new ClassLoader($project->getBuildOutputTempDir());
-    $classLoader->write($allClass);
+    $classLoader = new ClassLoader($project->getBuildOutputDir());
+    $classLoader->write($classMap);
 
-    $includes = [];
     $requireFiles = [];
     /**
      * @var $value Dependence
      */
-    foreach ($project->getDependenceProcessor()->getMergeResult() as $value) {
-      $includes[] = $value->getTopDir();
-      $requireFiles = array_merge($requireFiles, $value->getRequireFile());
+    foreach ($this->processor_->getMergeResult() as $value) {
+      $requireFiles = array_merge($requireFiles, $value->getRequireFiles());
     }
-
-    $includes[] = $project->getBuildOutputTempDir();
-    $includes[] = $project->getAnnotationOutputDir();
 
     // classLoader 必须require
     $requireFiles[] = $classLoader->getFile();
@@ -60,10 +56,12 @@ class Build extends Command {
     }
 
     $pharPath = $project->getConfig()->buildConfig->target;
+
     $pharName = basename($pharPath);
     $ph = new Phar("$pharPath.phar", 0, $pharName);
+
     $this->appendFiles($ph, $classLoader);
-    $this->setStub($ph, $includes, $requireFiles
+    $this->setStub($ph, $requireFiles
       , $classLoader->getArrayVarString());
   }
 
@@ -74,10 +72,10 @@ class Build extends Command {
     /**
      * @var $value Dependence
      */
-    foreach ($project->getDependenceProcessor()->getMergeResult() as $value) {
+    foreach ($this->processor_->getMergeResult() as $value) {
       $files[] = $value->getAllFiles();
     }
-    $files = array_merge($files, array_values($this->allProjectClasses_));
+    $files = array_merge($files, array_values($this->classFileMap_));
     $files[] = $classLoader->getFile();
     $files[] = $project->getConfig()->buildConfig->index;
 
@@ -93,18 +91,17 @@ class Build extends Command {
     $ph->stopBuffering();
   }
 
-  private function setStub(Phar $ph, array $includes
+  private function setStub(Phar $ph
     , array $requireFiles, string $classLoaderArrayStr):void {
-    $inc = 'phar://.__FILE__'.DIRECTORY_SEPARATOR.PATH_SEPARATOR;
-    foreach ($includes as $include) {
-      $inc = $inc . 'phar://.__FILE__.'
-        .DIRECTORY_SEPARATOR. $include .PATH_SEPARATOR;
-    }
 
+    // todo : index
     $index = Project::getInstance()->getConfig()->buildConfig->index;
 
     $req = "";
     foreach ($requireFiles as $requireFile) {
+      if (substr($requireFile, 0, 2) === './') {
+        $requireFile = substr($requireFile, 2);
+      }
       $req = $req . "require_once($requireFile);".PHP_EOL;
     }
 
@@ -113,7 +110,7 @@ class Build extends Command {
   Phar::interceptFileFuncs();
   Phar::mapPhar();
 
-  set_include_path($inc . get_include_path());
+  set_include_path('phar://.__FILE__'. PATH_SEPARATOR . get_include_path());
 
   $req
   
@@ -133,4 +130,10 @@ EOF;
     $ph->setStub($stub);
 
   }
+
+  private $classFileMap_;
+  /**
+   * @var DependenceProcessor
+   */
+  private $processor_;
 }
