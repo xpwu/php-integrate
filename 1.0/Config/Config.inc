@@ -9,7 +9,7 @@
 namespace Inte\Config;
 
 
-class Config {
+class Config implements \Inte\Annotation\Config {
   function __construct(string $confFile) {
     require_once $confFile;
     $this->buildDir = isset($build_dir)??"build";
@@ -53,4 +53,12 @@ class Config {
    * @var BuildConfig
    */
   public $buildConfig = null;
+
+  function getBuildConfig(): \Inte\Annotation\BuildConfig {
+    return $this->buildConfig;
+  }
+
+  function getPublishConfig(): \Inte\Annotation\PublishConfig {
+    return $this->publishConfig;
+  }
 }

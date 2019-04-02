@@ -17,7 +17,7 @@ abstract class Command {
   public function run():void {
     $this->project_ = Project::getInstance();
     chdir($this->project_->getRootDir());
-    $this->logger_ = new Logger();
+    $this->logger_ = new SimpleLogger();
     $this->config_ = $this->project_->getConfig();
     $this->step_ = 0;
 
@@ -147,7 +147,7 @@ abstract class Command {
    */
   private $config_;
   /**
-   * @var Logger
+   * @var SimpleLogger
    */
   private $logger_;
   /**

@@ -9,7 +9,7 @@
 namespace Inte\Config;
 
 
-class PublishConfig {
+class PublishConfig implements \Inte\Annotation\PublishConfig {
 
   function __construct(array $publish) {
     $this->repo = $publish['repo']??"";
@@ -26,4 +26,20 @@ class PublishConfig {
    * @var array [string]
    */
   public $annotationServices = [];
+
+  function getRepo(): string {
+    return $this->repo;
+  }
+
+  function getName(): string {
+    return $this->name;
+  }
+
+  function getVersion(): string {
+    return $this->version;
+  }
+
+  function getAnnotationServices(): array {
+    return $this->annotationServices;
+  }
 }

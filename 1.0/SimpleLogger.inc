@@ -9,9 +9,10 @@
 namespace Inte;
 
 
+use Inte\Annotation\Logger;
 use Inte\Error\NormalError;
 
-class Logger {
+class SimpleLogger implements Logger {
 
   public function error(string $msg):void {
 //    echo "ERROR: " . $msg . PHP_EOL;

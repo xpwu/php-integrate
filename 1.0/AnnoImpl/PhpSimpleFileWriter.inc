@@ -9,7 +9,7 @@
 namespace Inte\Annotation;
 
 
-use Inte\Logger;
+use Inte\SimpleLogger;
 
 class PhpSimpleFileWriter implements PhpFileWriter {
 
@@ -26,7 +26,7 @@ class PhpSimpleFileWriter implements PhpFileWriter {
     // xb: 不能重名
     $fd = fopen($this->fileName_, "xb");
     if ($fd === false) {
-      (new Logger())->warn($this->outputDir_
+      (new SimpleLogger())->warn($this->outputDir_
         . DIRECTORY_SEPARATOR . $this->fileName_ . " has existed!");
       return;
     }

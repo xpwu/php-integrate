@@ -126,7 +126,7 @@ class AnnotationCompiler {
        * @var AbstractAnnotationServer $server
        */
       $server = new $item();
-      $server->init(new Logger(), $filer
+      $server->init(new SimpleLogger(), $filer
         , Project::getInstance()->getConfig());
       $this->servers_[] = $server;
     }

@@ -9,7 +9,7 @@
 namespace Inte\Config;
 
 
-class BuildConfig {
+class BuildConfig implements \Inte\Annotation\BuildConfig {
   function __construct(array $build) {
     $this->target = isset($build['target'])??"main";
     $this->indexClass = isset($build['index_class'])??"NoIndexClass_PleaseSetIt";
@@ -17,4 +17,12 @@ class BuildConfig {
 
   public $target = "main";
   public $indexClass = "NoIndexClass_PleaseSetIt";
+
+  function getTarget(): string {
+    return $this->target;
+  }
+
+  function getIndexClass(): string {
+    return $this->indexClass;
+  }
 }
