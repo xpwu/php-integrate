@@ -20,6 +20,9 @@ class AnnotationProcessor {
 
     $spec = new DependenceSpec($this->getTopDir());
     $spec->checkIsAAnnotationProcessor();
+
+    $this->self_ = Factory::convertFromAnnoProcessor($this->repo_
+      , $this->name_, $this->version_);
   }
 
   /**
@@ -45,17 +48,17 @@ class AnnotationProcessor {
   }
 
   public function convertToDependence():Dependence {
-    return new LibNameVersion($this->repo_
-      , $this->name_.":".$this->version_, true);
+    return $this->self_;
   }
-
-  // todo: 后面增加库文件下载与上传处理器，路径应该由此处理器提供
 
   private function getTopDir(): string {
-    return $this->repo_ . DIRECTORY_SEPARATOR
-      . $this->name_ . DIRECTORY_SEPARATOR . $this->version_;
+    return $this->self_->getTopDir();
   }
 
+  /**
+   * @var Dependence
+   */
+  private $self_;
 
   private $repo_;
   private $name_;

@@ -7,32 +7,66 @@
  */
 
 namespace Inte;
+use Inte\Dependence\Content;
+use Inte\Dependence\Position;
+use Inte\Error\NormalError;
 
 /**
  *
  * 路径信息：
  * 返回的所有文件或者路径都是相对于Project->rootDir的路径 或者 相对于系统include_path中的某一路径
  *
- * todo: include_path 中的依赖文件还没有考虑
  */
 
-interface Dependence {
+class Dependence {
+
+  public function __construct(Position $position, Content $content) {
+    $this->position_ = $position;
+    $this->content_ = $content;
+  }
+
   /**
    * @return array  [className=>file]
    */
-  function getClasses():array ;
-  function getRequireFiles():array ;
+  public function getClasses():array {
+    return $this->content_->getClasses();
+  }
+  public function getRequireFiles():array {
+    return $this->content_->getRequireFiles();
+  }
 
   /**
    * @return Dependence[]
    */
-  function getSubDependencies():array ;
+  public function getSubDependencies():array {
+    return $this->content_->getSubDependencies($this->getRepo());
+  }
 
-  function getAllFiles():array ;
+  public function getAllFiles():array {
+    return $this->position_->getAllNeedFilesForInte($this->content_);
+  }
 
-  function getTopDir():string ;
+  public function getTopDir():string {
+    return $this->position_->getTopDir();
+  }
 
-  function getName():string ;
-  function getVersion():string ;
-  function getRepo():string ;
+  public function getName():string {
+    return $this->position_->getName();
+  }
+  public function getVersion():string {
+    return $this->position_->getVersion();
+  }
+  public function getRepo():string {
+    return $this->position_->getRepo();
+  }
+
+  /**
+   * @var Content
+   */
+  private $content_;
+
+  /**
+   * @var Position
+   */
+  private $position_;
 }

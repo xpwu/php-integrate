@@ -11,6 +11,7 @@ namespace Inte\Command;
 
 use Inte\ClassLoader;
 use Inte\Command;
+use Inte\Dependence\RepoLib;
 use Inte\DependenceProcessor;
 use Inte\DependenceSpec;
 use Inte\Error\NormalError;
@@ -25,9 +26,8 @@ class Publish extends Command {
     $name = $config->publishConfig->name;
     $version = $config->publishConfig->version;
 
-    // todo: 后续应该由文件上传下载器 获取
-    $dir = $config->publishConfig->repo
-      . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . $version;
+    $repoLib = new RepoLib($config->publishConfig->repo, $name, $version);
+    $dir = $repoLib->getTopDir();
 
     mkdir($dir, 0777, true);
 
