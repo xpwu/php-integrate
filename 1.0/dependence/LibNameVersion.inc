@@ -59,12 +59,7 @@ class LibNameVersion extends Content {
   }
 
   function getAllNeedFilesForInte(): array {
-    $fileFinder = new FileFinder($this->getPosition()->getTopDir()
-      , ['**'], [DependenceSpec::getFileName()]);
-
-    return array_map(function ($file){
-      return $this->getPosition()->getTopDir(). DIRECTORY_SEPARATOR . $file;
-    }, $fileFinder->getAllFile());
+    return $this->getFilesByFilter(['**'], [DependenceSpec::getFileName()]);
   }
 
   private $name_ = "";

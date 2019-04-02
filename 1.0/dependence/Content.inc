@@ -10,6 +10,7 @@ namespace Inte\Dependence;
 
 
 use Inte\Dependence;
+use Inte\FileFinder;
 
 /**
  *
@@ -38,6 +39,15 @@ abstract class Content {
 
   protected function getPosition():Position {
     return $this->position_;
+  }
+
+  protected function getFilesByFilter(array $include, array $exclude=[]):array {
+    $fileFinder = new FileFinder($this->getPosition()->getTopDir()
+      , $include, $exclude);
+
+    return array_map(function ($file){
+      return $this->getPosition()->getTopDir(). DIRECTORY_SEPARATOR . $file;
+    }, $fileFinder->getAllFile());
   }
 
   private $position_;
