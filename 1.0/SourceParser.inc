@@ -27,7 +27,7 @@ class SourceParser {
     $shareMemory = shm_attach($shm_id);
     define('MayBeFailedIndex', 1);
 
-    $nowFiles = [];
+    $nowFiles = $this->files_;
 
     do {
       $loadedFiles = [];
@@ -65,6 +65,7 @@ class SourceParser {
       }
 
       $nowFiles = array_diff($nowFiles, $loadedFiles);
+      $this->allLoadedFiles_ = array_merge($this->allLoadedFiles_, $loadedFiles);
 
       // 如果成功加载至少一个文件  则再次循环 测试是否有还可以加载的文件
     }while(count($loadedFiles) != 0);
@@ -122,12 +123,14 @@ class SourceParser {
   }
 
   public function getParsedFileOrderByParsingSequence():array {
-
+    return $this->allLoadedFiles_;
   }
 
   private $files_ = [];
   private $result_ = [];
   private $noParseFile_ = [];
+
+  private $allLoadedFiles_ = [];
 
   private $parsed_ = false;
 }
