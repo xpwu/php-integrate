@@ -8,8 +8,6 @@
 
 namespace Inte;
 
-
-use Inte\Annotation\AbstractAnnotationServer;
 use Inte\Dependence\Factory;
 use Inte\Dependence\LibNameVersion;
 
