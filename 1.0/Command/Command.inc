@@ -16,6 +16,7 @@ use Inte\Error\NormalError;
 abstract class Command {
   public function run():void {
     $this->project_ = Project::getInstance();
+    chdir($this->project_->getRootDir());
     $this->logger_ = new Logger();
     $this->config_ = $this->project_->getConfig();
     $this->step_ = 0;
