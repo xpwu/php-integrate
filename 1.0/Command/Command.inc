@@ -36,7 +36,7 @@ abstract class Command {
     $this->logger_->info("$this->step_: find file...");
 
     $fileFinder = new FileFinder($this->project_->getRootDir(), $this->config_->src
-      , $this->config_->exclude_src);
+      , $this->config_->excludeSrc);
     $allProjectFiles = $fileFinder->getAllFile();
 
     if (count($allProjectFiles) == 0) {

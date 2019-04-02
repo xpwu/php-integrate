@@ -10,6 +10,11 @@ namespace Inte\Config;
 
 
 class BuildConfig {
-  public $target = null;
-  public $index_class = null;
+  function __construct(array $build) {
+    $this->target = isset($build['target'])??"main";
+    $this->indexClass = isset($build['index_class'])??"NoIndexClass_PleaseSetIt";
+  }
+
+  public $target = "main";
+  public $indexClass = "NoIndexClass_PleaseSetIt";
 }

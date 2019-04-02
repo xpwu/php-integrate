@@ -89,7 +89,7 @@ EOF;
     $ret = $this->read();
 
     $annServer = $ret[self::AnnotationServerKey];
-    if ($annServer != null || count($annServer) != 0) {
+    if ($annServer == null || count($annServer) == 0) {
       throw new NormalError($ret[self::NameKey] ." [@${ret[self::VersionKey]}]"
         . " is Not a Annotation Processor, which has Not any annotationServer supported.");
     }

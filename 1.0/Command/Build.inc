@@ -113,7 +113,7 @@ class Build extends Command {
     , array $requireFiles, string $classLoaderArrayStr):void {
 
     // index class 中必须存在 static 的 main 方法
-    $index = Project::getInstance()->getConfig()->buildConfig->index_class;
+    $index = Project::getInstance()->getConfig()->buildConfig->indexClass;
     $indexRef = new ReflectionClass($index);
     try {
       $method = $indexRef->getMethod('main');

@@ -6,5 +6,29 @@
  * Time: 6:39 PM
  */
 
-$src = "";
-$exclude_src = "";
+
+
+$src = [];
+
+$exclude_src = [];
+
+$build_dir = "";
+
+$anno_and_dep_repo = "";
+
+$annotation_processors = [];
+
+$dependencies = [];
+
+$publish = [
+  'repo'=> "",
+  'name'=> "",
+  'version'=>"",
+  'annotation_services' => []
+];
+
+$build = [
+  'target' => "", // 不需要添加 phar 后缀
+  'index_class' => ""
+];
+

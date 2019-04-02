@@ -11,15 +11,26 @@ namespace Inte\Config;
 
 class Config {
   function __construct(string $confFile) {
-    // todo: 全部都是相对路径
+    require_once $confFile;
+    $this->buildDir = isset($build_dir)??"build";
+    $this->src = isset($src)??[];
+    $this->excludeSrc = isset($exclude_src)??[];
+    $this->annoAndDepRepo = isset($anno_and_dep_repo)??"";
+    $this->annotationProcessors = isset($annotation_processors)??[];
+    $this->dependencies = isset($dependencies)??[];
+
+    $this->publishConfig = new PublishConfig(isset($dependencies)??[]);
+    $this->buildConfig = new BuildConfig(isset($build)??[]);
   }
+
+  public $buildDir = "build";
 
   /**
    * @var array [string]
    */
   public $src = [];
 
-  public $exclude_src = [];
+  public $excludeSrc = [];
 
   public $annoAndDepRepo = "";
 
