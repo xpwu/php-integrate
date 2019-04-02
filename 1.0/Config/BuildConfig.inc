@@ -11,5 +11,5 @@ namespace Inte\Config;
 
 class BuildConfig {
   public $target = null;
-  public $index = null;
+  public $index_class = null;
 }

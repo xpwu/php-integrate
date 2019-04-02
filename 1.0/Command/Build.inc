@@ -16,6 +16,7 @@ use Inte\DependenceProcessor;
 use Inte\Error\NormalError;
 use Inte\Project;
 use Phar;
+use ReflectionClass;
 
 class Build extends Command {
 
@@ -30,15 +31,25 @@ class Build extends Command {
     $project = Project::getInstance();
     $this->processor_ = $processor;
 
+    // 准备 classFileMap
+
     /**
      * @var $value Dependence
      */
     foreach ($this->processor_->getMergeResult() as $value) {
       $classMap = array_merge($classMap, $value->getClasses());
     }
+    $classMap = array_map(function ($value){
+      if (substr($value, 0, 2) === './') {
+        return substr($value, 2);
+      }
+      return $value;
+    }, $classMap);
 
     $classLoader = new ClassLoader($project->getBuildOutputDir());
     $classLoader->write($classMap);
+
+    // 准备requireFiles
 
     $requireFiles = [];
     /**
@@ -50,6 +61,14 @@ class Build extends Command {
 
     // classLoader 必须require
     $requireFiles[] = $classLoader->getFile();
+    $requireFiles = array_map(function ($value){
+      if (substr($value, 0, 2) === './') {
+        return substr($value, 2);
+      }
+      return $value;
+    }, $requireFiles);
+
+    // 写入phar
 
     if (!Phar::canWrite()) {
       throw new NormalError("phar can not write!");
@@ -77,7 +96,6 @@ class Build extends Command {
     }
     $files = array_merge($files, array_values($this->classFileMap_));
     $files[] = $classLoader->getFile();
-    $files[] = $project->getConfig()->buildConfig->index;
 
     $ph->startBuffering();
 
@@ -94,8 +112,18 @@ class Build extends Command {
   private function setStub(Phar $ph
     , array $requireFiles, string $classLoaderArrayStr):void {
 
-    // todo : index
-    $index = Project::getInstance()->getConfig()->buildConfig->index;
+    // index class 中必须存在 static 的 main 方法
+    $index = Project::getInstance()->getConfig()->buildConfig->index_class;
+    $indexRef = new ReflectionClass($index);
+    try {
+      $method = $indexRef->getMethod('main');
+      if (!$method->isStatic()) {
+        throw new NormalError(
+          "'main' is not a static method, which supported by \$index_class ");
+      }
+    }catch (\ReflectionException $exception) {
+      throw new NormalError($exception->getMessage());
+    }
 
     $req = "";
     foreach ($requireFiles as $requireFile) {
@@ -123,7 +151,7 @@ class Build extends Command {
       return false;
     });
   
-  require_once("$index");
+  $index::main();
   __HALT_COMPILER(); ?>
 EOF;
 
