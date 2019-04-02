@@ -11,6 +11,10 @@ namespace Inte;
 
 
 
+use Inte\Command\Build;
+use Inte\Command\PrintAllProjectFiles;
+use Inte\Command\PrintDependence;
+use Inte\Command\Publish;
 use Inte\Error\NormalError;
 use Inte\Error\OK;
 
@@ -22,7 +26,7 @@ Usage:  option
           -v show version;
           -w show path;
           
-          --command: 'build' or 'publish',
+          --command: 'build', 'publish', 'printFiles', 'printDependence'
                 default is 'build'
 
 EOF;
@@ -63,7 +67,10 @@ EOF;
 
     $this->findRootDir();
 
-    $commands = ["build"=>'Inte\Command\Build', 'publish'=>'Inte\Command\Publish'];
+    $commands = ["build"=>Build::class
+      , 'publish'=>Publish::class
+      , 'printFiles'=>PrintAllProjectFiles::class
+      , 'printDependence'=>PrintDependence::class];
 
     if (!array_key_exists('command', $option)) {
       $this->command_ = new $commands['build']();
