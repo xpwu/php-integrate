@@ -25,8 +25,6 @@ class Project {
     $this->conf = $config;
     $this->rootDir = $rootDir;
     set_include_path($rootDir . PATH_SEPARATOR . get_include_path());
-    // todo: 初始化 build 目录
-    // TODO: 初始化 各个变量 并检查
   }
 
   private function __construct() {
@@ -37,12 +35,16 @@ class Project {
   }
 
   public function getAnnotationOutputDir():string {
-    return Project::buildAnnotationDir;
+    $ret = $this->conf->buildDir . DIRECTORY_SEPARATOR . self::buildAnnotationDir;
+    if (!file_exists($ret)) {
+      mkdir($ret, 0777, true);
+    }
+    return $ret;
   }
 
-  public function getBuildOutputDir():string {
-
-  }
+//  public function getBuildOutputDir():string {
+//
+//  }
 
   public function getRootDir():string {
     return $this->rootDir;
@@ -55,8 +57,7 @@ class Project {
 
   private $rootDir = "";
 
-  private const buildDir = DIRECTORY_SEPARATOR . "build"
-      . DIRECTORY_SEPARATOR . "inte";
-  private const buildAnnotationDir = Project::buildDir
+  private const buildDir = "inte";
+  private const buildAnnotationDir = self::buildDir
           . DIRECTORY_SEPARATOR . "annotation";
 }

@@ -46,7 +46,7 @@ class Build extends Command {
       return $value;
     }, $classMap);
 
-    $classLoader = new ClassLoader($project->getBuildOutputDir());
+    $classLoader = new ClassLoader(".");
     $classLoader->write($classMap);
 
     // 准备requireFiles
