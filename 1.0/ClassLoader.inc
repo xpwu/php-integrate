@@ -18,7 +18,7 @@ namespace Inte;
  */
 
 class ClassLoader {
-  private const FileName = ".__InteClassLoader__.inc";
+  private const FileName = "__InteClassLoader__.inc";
 
   function __construct(string $dir, string $libName = "Project") {
     $this->dir_ = $dir;
