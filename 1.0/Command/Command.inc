@@ -23,7 +23,7 @@ abstract class Command {
 
     $allProjectFiles = $this->findFile();
 
-    $dependenceProcessor = $this->parseDependence($annoCompiler);
+    list($dependenceProcessor, $annoCompiler) = $this->parseDependence();
 
     $sequenceFilesByCompiler = $this->processAnnotation($allProjectFiles, $annoCompiler);
 
@@ -49,7 +49,10 @@ abstract class Command {
     return $allProjectFiles;
   }
 
-  private function parseDependence(AnnotationCompiler &$compiler): DependenceProcessor {
+  /**
+   * @return array [DependenceProcessor, AnnotationCompiler]
+   */
+  private function parseDependence(): array {
     $this->step_++;
     $this->logger_->info("$this->step_: parse dependence...");
 
@@ -72,7 +75,7 @@ abstract class Command {
 
     $this->postParseDependence($dependenceProcessor, $compiler);
 
-    return $dependenceProcessor;
+    return [$dependenceProcessor, $compiler];
   }
 
   /**
