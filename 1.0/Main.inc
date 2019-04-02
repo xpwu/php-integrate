@@ -11,7 +11,6 @@ namespace Inte;
 use Inte\Config\Config;
 use Inte\Error\NormalError;
 use Inte\Error\OK;
-use Inte\Error\Warning;
 
 class Main {
   private function prepare() {
@@ -50,5 +49,3 @@ class Main {
     }
   }
 }
-
-Main::main();
