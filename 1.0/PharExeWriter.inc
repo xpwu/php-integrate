@@ -17,7 +17,7 @@ class PharExeWriter extends PharWriter {
     parent::__construct($dir.DIRECTORY_SEPARATOR.$baseName);
 
     $this->oldName_ = $dir.DIRECTORY_SEPARATOR.$baseName . ".phar";
-    $this->name_ = substr($this->oldName_, -1*strlen("_exe.phar"));
+    $this->name_ = substr($this->oldName_, 0,-1*strlen("_exe.phar"));
   }
 
   protected function getEnv():string {
