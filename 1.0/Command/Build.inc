@@ -57,27 +57,19 @@ class Build extends Command {
       $requireFiles = array_merge($requireFiles, $value->getRequireFiles());
     }
 
-    // classLoader 必须require
-    $requireFiles[] = $classLoader->getFile();
-    $requireFiles = array_map(function ($value){
-      if (substr($value, 0, 2) === './') {
-        return substr($value, 2);
-      }
-      return $value;
-    }, $requireFiles);
-
     // 写入phar
 
     $pharPath = $project->getConfig()->buildConfig->target;
 
     $phWriter = new PharWriter($pharPath);
-    $phWriter->write($this->getAllFiles($classLoader));
-    $phWriter->setStub($requireFiles, $classLoader->getArrayVarString()
-      , $project->getConfig()->buildConfig->indexClass);
+    $phWriter->write($this->getAllFiles(), $classLoader);
+    $phWriter->setStub($classLoader
+      , $project->getConfig()->buildConfig->indexClass
+      , $requireFiles);
 
   }
 
-  private function getAllFiles(ClassLoader $classLoader):array {
+  private function getAllFiles():array {
     $files = [];
 
     /**
@@ -87,7 +79,6 @@ class Build extends Command {
       $files[] = $value->getAllFiles();
     }
     $files = array_merge($files, array_values($this->classFileMap_));
-    $files[] = $classLoader->getFile();
 
     return $files;
   }

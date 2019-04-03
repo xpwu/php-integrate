@@ -21,25 +21,32 @@ class PharWriter {
 
     $baseName = basename($fullName, ".phar");
     $dir = dirname($fullName);
+    @unlink($dir.DIRECTORY_SEPARATOR.$baseName. ".phar");
+
     $this->ph_ = new Phar($dir.DIRECTORY_SEPARATOR.$baseName. ".phar"
       , 0, $baseName);
   }
 
-  public function write(array $files) {
+  public function write(array $files, ClassLoader $classLoader) {
     $this->ph_->startBuffering();
+
+    // classLoader 必须打包进去
+    if (!in_array($classLoader->getFile(), $files, true)) {
+      $files[] = $classLoader->getFile();
+    }
 
     foreach ($files as $file) {
       if (substr($file, 0, 2) === './') {
         $file = substr($file, 2);
       }
-      $ph[$file] = file_get_contents($file);
+      $this->ph_[$file] = file_get_contents($file);
     }
 
     $this->ph_->stopBuffering();
   }
 
-  public function setStub(array $requireFiles
-    , string $classLoaderArrayStr, string $indexClass) {
+  public function setStub(ClassLoader $classLoader, string $indexClass
+    , array $requireFiles = []) {
 
     // index class 中必须存在 static 的 main 方法
     $indexRef = new ReflectionClass($indexClass);
@@ -53,12 +60,19 @@ class PharWriter {
       throw new NormalError($exception->getMessage());
     }
 
+    $classLoaderArrayStr = $classLoader->getArrayVarString();
+
+    // classLoader 必须require
+    if (!in_array($classLoader->getFile(), $requireFiles, true)) {
+      $requireFiles[] = $classLoader->getFile();
+    }
+
     $req = "";
     foreach ($requireFiles as $requireFile) {
       if (substr($requireFile, 0, 2) === './') {
         $requireFile = substr($requireFile, 2);
       }
-      $req = $req . "require_once($requireFile);".PHP_EOL;
+      $req = $req . "require_once \"$requireFile\";".PHP_EOL;
     }
 
     $env = $this->getEnv();
