@@ -37,8 +37,8 @@ EOF;
 
     $argv = $_SERVER['argv'];
     $pos_args = array_slice($argv, $optind);
-    if ($pos_args !== "") {
-      throw new NormalError("Not support argv: ".$pos_args .", please use '-h'");
+    if (count($pos_args) !== 0) {
+      throw new NormalError("Not support argv: ".$pos_args[0] .", please use '-h'");
     }
 
     if (array_key_exists('h', $option) && $option['h'] === false) {
