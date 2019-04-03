@@ -60,6 +60,7 @@ class Build extends Command {
     // 写入phar
 
     $pharPath = $project->getConfig()->buildConfig->target;
+    mkdir(dirname($pharPath), 0777, true);
 
     $phWriter = new PharWriter($pharPath);
     $phWriter->write($this->getAllFiles(), $classLoader);

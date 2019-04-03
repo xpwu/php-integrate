@@ -19,6 +19,7 @@ class BuildConfig implements \Inte\Annotation\BuildConfig {
   public $indexClass = "NoIndexClass_PleaseSetIt";
 
   function getTarget(): string {
+    mkdir($this->target, 0777, true);
     return $this->target;
   }
 
