@@ -51,6 +51,35 @@ class InteBuilder {
     $classLoader->write($this->result_);
   }
 
+  private function writeStubForDebug(ClassLoader $classLoader, string $indexClass) {
+
+    $classLoaderArrayStr = $classLoader->getArrayVarString();
+    $req = $classLoader->getFile();
+
+    $content = <<<EOF
+<?php
+
+  set_include_path('__FILE__'. PATH_SEPARATOR . get_include_path());
+
+  require_once "${req}";
+
+  spl_autoload_register( function(\$className) {
+      if (array_key_exists(\$className, $classLoaderArrayStr)) {
+        require_once (${classLoaderArrayStr}[\$className]);
+        return true;
+      }
+
+      return false;
+    });
+  
+  $indexClass::main();
+  
+EOF;
+
+    file_put_contents("stub.php", $content);
+
+  }
+
   static public function main() {
     $builder = new InteBuilder();
     $builder->prepare();
@@ -67,6 +96,8 @@ class InteBuilder {
     $phExeWriter = new PharExeWriter("phpinte");
     $phExeWriter->write($files, $classLoader);
     $phExeWriter->setStub($classLoader, Main::class);
+
+    $builder->writeStubForDebug($classLoader, Main::class);
 
     echo PHP_EOL;
   }
