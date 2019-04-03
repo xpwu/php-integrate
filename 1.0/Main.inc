@@ -42,9 +42,11 @@ class Main {
       exit(0);
 
     } catch (OK $error) {
+      echo PHP_EOL;
       exit(0);
     } catch (NormalError $error) {
       echo $error;
+      echo PHP_EOL;
       exit($error->getExitStatus());
     }
   }
