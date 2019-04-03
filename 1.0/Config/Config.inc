@@ -12,15 +12,15 @@ namespace Inte\Config;
 class Config implements \Inte\Annotation\Config {
   function __construct(string $confFile) {
     require_once $confFile;
-    $this->buildDir = isset($build_dir)??"build";
-    $this->src = isset($src)??[];
-    $this->excludeSrc = isset($exclude_src)??[];
-    $this->annoAndDepRepo = isset($anno_and_dep_repo)??"";
-    $this->annotationProcessors = isset($annotation_processors)??[];
-    $this->dependencies = isset($dependencies)??[];
+    $this->buildDir = $build_dir??"build";
+    $this->src = $src??[];
+    $this->excludeSrc = $exclude_src??[];
+    $this->annoAndDepRepo = $anno_and_dep_repo??"";
+    $this->annotationProcessors = $annotation_processors??[];
+    $this->dependencies = $dependencies??[];
 
-    $this->publishConfig = new PublishConfig(isset($dependencies)??[]);
-    $this->buildConfig = new BuildConfig(isset($build)??[]);
+    $this->publishConfig = new PublishConfig($publish??[]);
+    $this->buildConfig = new BuildConfig($build??[]);
   }
 
   public $buildDir = "build";
