@@ -13,15 +13,29 @@ class Config implements \Inte\Annotation\Config {
   function __construct(string $confFile) {
     require_once $confFile;
     $this->buildDir = $build_dir??"build";
+    if ($this->buildDir == "") {
+      $this->buildDir = "build";
+    }
     $this->src = $src??[];
     $this->excludeSrc = $exclude_src??[];
     $this->annoAndDepRepo = $anno_and_dep_repo??"";
     $this->annotationProcessors = $annotation_processors??[];
     $this->dependencies = $dependencies??[];
 
+    $this->checkArrayOrNull($this->src);
+    $this->checkArrayOrNull($this->excludeSrc);
+    $this->checkArrayOrNull($this->annotationProcessors);
+    $this->checkArrayOrNull($this->dependencies);
+
+    $this->checkStringOrNull($this->annoAndDepRepo);
+
     $this->publishConfig = new PublishConfig($publish??[]);
     $this->buildConfig = new BuildConfig($build??[]);
   }
+
+  // 如果类型不对  会自动报错  故没有写实现
+  private function checkArrayOrNull(?array $a) {}
+  private function checkStringOrNull(?string $a) {}
 
   public $buildDir = "build";
 

@@ -25,7 +25,7 @@ class DependenceProcessor {
    * @param Dependence[] $dependence
    */
   public function appendDependence(array $dependencies) {
-    $this->dependencies_[] = array_merge($this->dependencies_[], $dependencies);
+    $this->dependencies_ = array_merge($this->dependencies_, $dependencies);
 
     if (!$this->hasMerged()) {
       return;
@@ -195,7 +195,7 @@ class DependenceProcessor {
   /**
    * @var Dependence[]
    */
-  private $dependencies_;
+  private $dependencies_ = [];
   /**
    * @var Dependence[]
    */

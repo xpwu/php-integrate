@@ -84,7 +84,7 @@ EOF;
     $builder = new InteBuilder();
     $builder->prepare();
 
-    $classLoader = new ClassLoader(".", "Inte");
+    $classLoader = new ClassLoader(".", "__Inte__");
 
     $builder->firstInte($classLoader);
     $files = array_values($builder->result_);

@@ -9,21 +9,30 @@
 namespace Inte\Config;
 
 
+use Inte\Project;
+
 class BuildConfig implements \Inte\Annotation\BuildConfig {
   function __construct(array $build) {
     $this->target = $build['target']??"main";
     $this->indexClass = $build['index_class']??"NoIndexClass_PleaseSetIt";
   }
 
-  public $target = "main";
-  public $indexClass = "NoIndexClass_PleaseSetIt";
+  private $target = "main";
+  private $indexClass = "NoIndexClass_PleaseSetIt";
 
   function getTarget(): string {
-    mkdir($this->target, 0777, true);
+    if ($this->target === "") {
+      $this->target = Project::getInstance()->getBuildOutputDir()
+        . DIRECTORY_SEPARATOR . "main";
+    }
+    @mkdir($this->target, 0777, true);
     return $this->target;
   }
 
   function getIndexClass(): string {
+    if ($this->indexClass === "") {
+      $this->indexClass = "NoIndexClass_PleaseSetIt";
+    }
     return $this->indexClass;
   }
 }

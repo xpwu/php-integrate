@@ -39,16 +39,20 @@ class Project {
   }
 
   public function getAnnotationOutputDir():string {
-    $ret = $this->conf->buildDir . DIRECTORY_SEPARATOR . self::buildAnnotationSubDir;
+    $ret = $this->buildDir . DIRECTORY_SEPARATOR . self::buildAnnotationSubDir;
     if (!file_exists($ret)) {
       mkdir($ret, 0777, true);
     }
     return $ret;
   }
 
-//  public function getBuildOutputDir():string {
-//
-//  }
+  public function getBuildOutputDir():string {
+    $ret = $this->buildDir . DIRECTORY_SEPARATOR . 'dist';
+    if (!file_exists($ret)) {
+      mkdir($ret, 0777, true);
+    }
+    return $ret;
+  }
 
   public function getRootDir():string {
     return $this->rootDir;
@@ -59,7 +63,7 @@ class Project {
 
       $p = scandir($path);
       foreach($p as $val){
-        if ($val !="." || $val !="..") {
+        if ($val === "." || $val === "..") {
           continue;
         }
 

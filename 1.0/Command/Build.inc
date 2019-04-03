@@ -30,22 +30,23 @@ class Build extends Command {
     $this->processor_ = $processor;
 
     // 准备 classFileMap
-
+    $this->classFileMap_ = $classMap;
     /**
      * @var $value Dependence
      */
     foreach ($this->processor_->getMergeResult() as $value) {
-      $classMap = array_merge($classMap, $value->getClasses());
+      $this->classFileMap_ = array_merge($this->classFileMap_
+        , $value->getClasses());
     }
-    $classMap = array_map(function ($value){
+    $this->classFileMap_ = array_map(function ($value){
       if (substr($value, 0, 2) === './') {
         return substr($value, 2);
       }
       return $value;
-    }, $classMap);
+    }, $this->classFileMap_);
 
-    $classLoader = new ClassLoader(".");
-    $classLoader->write($classMap);
+    $classLoader = new ClassLoader($project->getBuildOutputDir());
+    $classLoader->write($this->classFileMap_);
 
     // 准备requireFiles
 
@@ -59,13 +60,13 @@ class Build extends Command {
 
     // 写入phar
 
-    $pharPath = $project->getConfig()->buildConfig->target;
-    mkdir(dirname($pharPath), 0777, true);
+    $pharPath = $project->getConfig()->buildConfig->getTarget();
+    @mkdir(dirname($pharPath), 0777, true);
 
     $phWriter = new PharWriter($pharPath);
     $phWriter->write($this->getAllFiles(), $classLoader);
     $phWriter->setStub($classLoader
-      , $project->getConfig()->buildConfig->indexClass
+      , $project->getConfig()->buildConfig->getIndexClass()
       , $requireFiles);
 
   }
@@ -77,7 +78,7 @@ class Build extends Command {
      * @var $value Dependence
      */
     foreach ($this->processor_->getMergeResult() as $value) {
-      $files[] = $value->getAllFiles();
+      $files = array_merge($files, $value->getAllFiles());
     }
     $files = array_merge($files, array_values($this->classFileMap_));
 

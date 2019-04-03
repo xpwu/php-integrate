@@ -29,9 +29,9 @@ class AnnotationCompiler {
     }
 
     $this->distDir_ = $buildAnnotationDir . DIRECTORY_SEPARATOR . "src";
-    mkdir($this->distDir_, 0777, true);
+    @mkdir($this->distDir_, 0777, true);
     $this->tempDir_ = $buildAnnotationDir . DIRECTORY_SEPARATOR . "tmp";
-    mkdir($this->distDir_, 0777, true);
+    @mkdir($this->tempDir_, 0777, true);
 
     $this->sequenceFileName_ = $this->tempDir_. DIRECTORY_SEPARATOR . "sequence";
   }
@@ -100,6 +100,9 @@ class AnnotationCompiler {
     }
 
     $retFile = file_get_contents($this->sequenceFileName_);
+    if ($retFile === "") {
+      return [];
+    }
 
     return explode(";", $retFile);
   }

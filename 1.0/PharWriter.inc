@@ -49,8 +49,8 @@ class PharWriter {
     , array $requireFiles = []) {
 
     // index class 中必须存在 static 的 main 方法
-    $indexRef = new ReflectionClass($indexClass);
     try {
+      $indexRef = new ReflectionClass($indexClass);
       $method = $indexRef->getMethod('main');
       if (!$method->isStatic()) {
         throw new NormalError(
