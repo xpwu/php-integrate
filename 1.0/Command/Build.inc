@@ -13,10 +13,8 @@ use Inte\ClassLoader;
 use Inte\Command;
 use Inte\Dependence;
 use Inte\DependenceProcessor;
-use Inte\Error\NormalError;
+use Inte\PharWriter;
 use Inte\Project;
-use Phar;
-use ReflectionClass;
 
 class Build extends Command {
 
@@ -70,22 +68,16 @@ class Build extends Command {
 
     // 写入phar
 
-    if (!Phar::canWrite()) {
-      throw new NormalError("phar can not write!");
-    }
-
     $pharPath = $project->getConfig()->buildConfig->target;
 
-    $pharName = basename($pharPath);
-    $ph = new Phar("$pharPath.phar", 0, $pharName);
+    $phWriter = new PharWriter($pharPath);
+    $phWriter->write($this->getAllFiles($classLoader));
+    $phWriter->setStub($requireFiles, $classLoader->getArrayVarString()
+      , $project->getConfig()->buildConfig->indexClass);
 
-    $this->appendFiles($ph, $classLoader);
-    $this->setStub($ph, $requireFiles
-      , $classLoader->getArrayVarString());
   }
 
-  private function appendFiles(Phar $ph, ClassLoader $classLoader) {
-    $project = Project::getInstance();
+  private function getAllFiles(ClassLoader $classLoader):array {
     $files = [];
 
     /**
@@ -97,67 +89,9 @@ class Build extends Command {
     $files = array_merge($files, array_values($this->classFileMap_));
     $files[] = $classLoader->getFile();
 
-    $ph->startBuffering();
-
-    foreach ($files as $file) {
-      if (substr($file, 0, 2) === './') {
-        $file = substr($file, 2);
-      }
-      $ph[$file] = file_get_contents($file);
-    }
-
-    $ph->stopBuffering();
+    return $files;
   }
 
-  private function setStub(Phar $ph
-    , array $requireFiles, string $classLoaderArrayStr):void {
-
-    // index class 中必须存在 static 的 main 方法
-    $index = Project::getInstance()->getConfig()->buildConfig->indexClass;
-    $indexRef = new ReflectionClass($index);
-    try {
-      $method = $indexRef->getMethod('main');
-      if (!$method->isStatic()) {
-        throw new NormalError(
-          "'main' is not a static method, which supported by \$index_class ");
-      }
-    }catch (\ReflectionException $exception) {
-      throw new NormalError($exception->getMessage());
-    }
-
-    $req = "";
-    foreach ($requireFiles as $requireFile) {
-      if (substr($requireFile, 0, 2) === './') {
-        $requireFile = substr($requireFile, 2);
-      }
-      $req = $req . "require_once($requireFile);".PHP_EOL;
-    }
-
-    $stub = <<<EOF
-<?php
-  Phar::interceptFileFuncs();
-  Phar::mapPhar();
-
-  set_include_path('phar://.__FILE__'. PATH_SEPARATOR . get_include_path());
-
-  $req
-  
-  spl_autoload_register( function(\$className) {
-      if (array_key_exists(\$className, $classLoaderArrayStr)) {
-        require_once (${classLoaderArrayStr}[\$className]);
-        return true;
-      }
-
-      return false;
-    });
-  
-  $index::main();
-  __HALT_COMPILER(); ?>
-EOF;
-
-    $ph->setStub($stub);
-
-  }
 
   private $classFileMap_;
   /**

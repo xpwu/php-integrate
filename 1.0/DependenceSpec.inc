@@ -20,7 +20,12 @@ class DependenceSpec {
   private const FileName = "__spec.conf__.hphp";
 
   function __construct(string $dir) {
-    $this->dir_ = $dir;
+    // 去掉前面的  ./
+    if ($dir == ".") {
+      $this->dir_ = "";
+    } else {
+      $this->dir_ = $dir . DIRECTORY_SEPARATOR;
+    }
   }
 
   public function write(string $name, string $version
@@ -45,7 +50,7 @@ $annServer;
 
 EOF;
 
-    file_put_contents($this->dir_ . DIRECTORY_SEPARATOR . self::FileName
+    file_put_contents($this->dir_ . self::FileName
       , $content);
   }
 
@@ -60,7 +65,7 @@ EOF;
     $annotationServer = [];
     $dependencies = [];
 
-    require_once $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
+    require_once $this->dir_ . self::FileName;
 
     $this->result_ = [self::NameKey=>$name, self::VersionKey=>$version
       , self::DependenciesKey=>$dependencies];

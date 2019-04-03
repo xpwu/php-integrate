@@ -21,7 +21,13 @@ class ClassLoader {
   private const FileName = "__InteClassLoader__.inc";
 
   function __construct(string $dir, string $libName = "Project") {
-    $this->dir_ = $dir;
+    // 去掉前面的  ./
+    if ($dir == ".") {
+      $this->dir_ = "";
+    } else {
+      $this->dir_ = $dir . DIRECTORY_SEPARATOR;
+    }
+
     $this->libName_ = $libName;
   }
 
@@ -31,7 +37,7 @@ class ClassLoader {
   public function write(array $classes) {
     $arr = "";
     foreach ($classes as $class=>$file) {
-      $arr = $arr . "\t\t\"" . $class . '"=>"' . $file . "\"," . PHP_EOL;
+      $arr = $arr . PHP_EOL . "\t\t\"" . $class . '" => "' . $file . "\",";
     }
 
     $content = <<< EOF
@@ -52,7 +58,7 @@ class ClassLoader {
 EOF;
 
 
-    file_put_contents($this->dir_ . DIRECTORY_SEPARATOR . self::FileName
+    file_put_contents($this->dir_ . self::FileName
       , $content);
 
   }
@@ -61,7 +67,7 @@ EOF;
    * @return array [class => file]
    */
   public function read():array {
-    require_once $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
+    require_once $this->dir_ . self::FileName;
     /**
      * @var array
      */
@@ -76,7 +82,7 @@ EOF;
   }
 
   public function getFile():string {
-    return $this->dir_ . DIRECTORY_SEPARATOR . self::FileName;
+    return $this->dir_  . self::FileName;
   }
 
   private $dir_;
