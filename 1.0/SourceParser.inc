@@ -23,7 +23,7 @@ class SourceParser {
     }
     $this->parsed_ = true;
 
-    $shm_id = ftok(__FILE__,'SourceParser');
+    $shm_id = ftok(__FILE__,'m');
     $shareMemory = shm_attach($shm_id);
     define('MayBeFailedIndex', 1);
 
@@ -64,7 +64,7 @@ class SourceParser {
 
       }
 
-      $nowFiles = array_diff($nowFiles, $loadedFiles);
+      $nowFiles = array_values(array_diff($nowFiles, $loadedFiles));
       $this->allLoadedFiles_ = array_merge($this->allLoadedFiles_, $loadedFiles);
 
       // 如果成功加载至少一个文件  则再次循环 测试是否有还可以加载的文件

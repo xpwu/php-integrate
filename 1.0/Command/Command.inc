@@ -88,8 +88,8 @@ abstract class Command {
     $this->logger_->info("$this->step_: process annotation...");
     $sequenceFilesByCompiler
       = $compiler->compile($allProjectFiles);
-    $this->postProcessAnnotation(array_diff($sequenceFilesByCompiler
-      , $allProjectFiles));
+    $this->postProcessAnnotation(array_values(array_diff($sequenceFilesByCompiler
+      , $allProjectFiles)));
 
     return $sequenceFilesByCompiler;
   }

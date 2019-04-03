@@ -50,7 +50,7 @@ class FileFinder {
 
     chdir($pwd);
 
-    return array_diff($allFiles, $excludeFiles);
+    return array_values(array_diff($allFiles, $excludeFiles));
   }
 
   private $patterns_;
