@@ -25,7 +25,7 @@ class BuildConfig implements \Inte\Annotation\BuildConfig {
       $this->target = Project::getInstance()->getBuildOutputDir()
         . DIRECTORY_SEPARATOR . "main";
     }
-    @mkdir($this->target, 0777, true);
+    @mkdir(dirname($this->target), 0777, true);
     return $this->target;
   }
 

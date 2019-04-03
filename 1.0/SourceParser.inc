@@ -25,7 +25,9 @@ class SourceParser {
 
     $shm_id = ftok(__FILE__,'m');
     $shareMemory = shm_attach($shm_id);
-    define('MayBeFailedIndex', 1);
+    if (!defined('MayBeFailedIndex')) {
+      define('MayBeFailedIndex', 1);
+    }
 
     $nowFiles = $this->files_;
 

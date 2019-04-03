@@ -25,6 +25,9 @@ Usage:  option
           -c conf file name, default is project.conf.hphp;
           -v show version;
           -w show path;
+          -r show project root dir;
+          -l the same to '--command printFiles';
+          -d the same to '--command printDependence';
           
           --command: 'build', 'publish', 'printFiles', 'printDependence'
                 default is 'build'
@@ -33,7 +36,7 @@ EOF;
 
 
   function __construct() {
-    $option = getopt('hvwc:', ['command'], $optind);
+    $option = getopt('ldrhvwc:', ['command'], $optind);
 
     $argv = $_SERVER['argv'];
     $pos_args = array_slice($argv, $optind);
@@ -65,7 +68,20 @@ EOF;
       $this->configFileName = $option['c'];
     }
 
+    if (array_key_exists('l', $option)) {
+      $option['command'] = 'printFiles';
+    }
+
+    if (array_key_exists('d', $option)) {
+      $option['command'] = 'printDependence';
+    }
+
     $this->findRootDir();
+
+    if (array_key_exists('r', $option)) {
+      echo $this->rootDir.PHP_EOL;
+      throw new OK();
+    }
 
     $commands = ["build"=>Build::class
       , 'publish'=>Publish::class
@@ -82,7 +98,7 @@ EOF;
         . $option['command'] . ", please use '-h'");
     }
 
-    $this->command_ = new $option['command']();
+    $this->command_ = new $commands[$option['command']]();
   }
 
   public function getCommand():Command {

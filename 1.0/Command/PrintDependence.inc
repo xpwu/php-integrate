@@ -10,10 +10,11 @@ namespace Inte\Command;
 
 
 use Inte\AnnotationCompiler;
+use Inte\Command;
 use Inte\DependenceProcessor;
 use Inte\Error\OK;
 
-class PrintDependence {
+class PrintDependence extends Command {
   protected function postParseDependence(DependenceProcessor $processor
     , AnnotationCompiler $compiler):void {
 

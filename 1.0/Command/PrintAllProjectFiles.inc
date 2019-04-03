@@ -9,9 +9,10 @@
 namespace Inte\Command;
 
 
+use Inte\Command;
 use Inte\Error\OK;
 
-class PrintAllProjectFiles {
+class PrintAllProjectFiles extends Command {
   protected function postFindFile(array $files):void {
     echo implode(PHP_EOL, $files) . PHP_EOL;
 
