@@ -50,7 +50,7 @@ EOF;
     }
 
     if (array_key_exists('v', $option)) {
-      echo "phpinte 1.0".PHP_EOL;
+      echo "phpinte ". Version::str .PHP_EOL;
       throw new OK();
     }
 

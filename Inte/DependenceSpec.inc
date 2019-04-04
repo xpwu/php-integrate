@@ -35,18 +35,18 @@ class DependenceSpec {
     $annServer = "";
     if (count($annotationServer) != 0) {
       $annServer = "\$annotationServer = ["
-        . implode(",", $annotationServer) . "]";
+        . implode(",", $annotationServer) . "];";
     }
 
     $content = <<<EOF
 <?php
 
-\$name = {$name};
-\$version = {$version};
+\$name = "{$name}";
+\$version = "{$version}";
 
 \$dependencies = [{$arr}];
 
-$annServer;
+$annServer
 
 EOF;
 

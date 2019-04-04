@@ -22,7 +22,7 @@ class InteBuilder {
   private const preRequire = [
     "SourceParser.inc",
     "FileFinder.inc",
-    "ClassLoader.inc",
+    "ClassLoader.inc"
   ];
 
   public function prepare() {
@@ -54,6 +54,11 @@ class InteBuilder {
     $parser = new SourceParser($allFiles, true);
     $parser->parse();
     $result = $parser->getResult();
+
+    $left = $parser->getNotParseFile();
+    foreach ($left as $item) {
+      require_once $item;
+    }
 
     $this->result_ = array_merge($result, $this->result_);
 
@@ -92,6 +97,29 @@ EOF;
 
   }
 
+  private function getCoreLibClass(ClassLoader $loader, array $srcDir):array {
+
+    /**
+     * @var string[] $arr
+     */
+    $arr = $loader->read();
+
+    $coreLib = [];
+
+    foreach ($arr as $class=>$file) {
+      foreach ($srcDir as $item) {
+        $pos = strpos($file, $item);
+        if ($pos === false || $pos != 0) {
+          continue;
+        }
+
+        $coreLib[$class] = $file;
+      }
+    }
+
+    return $coreLib;
+  }
+
   static public function main() {
     $builder = new InteBuilder();
     $builder->prepare();
@@ -110,6 +138,18 @@ EOF;
     $phExeWriter->setStub($classLoader, Main::class);
 
     $builder->writeStubForDebug($classLoader, Main::class);
+
+    $libCoreFile = $builder->getCoreLibClass($classLoader
+      , ['Annotation']);
+    $publishWriter = new PublishWriter(".", "../lib"
+      , "InteCoreAnnotation", Version::str);
+    $publishWriter->write($libCoreFile);
+
+    $libCoreFile = $builder->getCoreLibClass($classLoader
+      , ['RunTime']);
+    $publishWriter = new PublishWriter(".", "../lib"
+      , "InteCore", Version::str);
+    $publishWriter->write($libCoreFile);
 
     echo PHP_EOL;
   }

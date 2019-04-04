@@ -16,6 +16,7 @@ use Inte\DependenceProcessor;
 use Inte\DependenceSpec;
 use Inte\Error\NormalError;
 use Inte\Project;
+use Inte\PublishWriter;
 
 class Publish extends Command {
 
@@ -25,11 +26,6 @@ class Publish extends Command {
     $config = $project->getConfig();
     $name = $config->publishConfig->name;
     $version = $config->publishConfig->version;
-
-    $repoLib = new RepoLib($config->publishConfig->repo, $name, $version);
-    $dir = $repoLib->getTopDir();
-
-    mkdir($dir, 0777, true);
 
     // check annotation service
     $allServices = $config->publishConfig->annotationServices;
@@ -43,20 +39,9 @@ class Publish extends Command {
       }
     }
 
+    $publishWriter = new PublishWriter($project->getRootDir()
+      , $config->publishConfig->repo, $name, $version);
+    $publishWriter->write($classFileMap, $config->dependencies, $allServices);
 
-    $pwd = getcwd();
-    chdir($project->getRootDir());
-    $classLoader = new ClassLoader($dir, $name);
-    $classLoader->write($classFileMap);
-
-    $spec = new DependenceSpec($dir);
-    $spec->write($name, $version, $config->dependencies, $allServices);
-
-    foreach ($classFileMap as $value) {
-      mkdir(dirname($value), 0777, true);
-      copy($value, $dir .DIRECTORY_SEPARATOR. $value);
-    }
-
-    chdir($pwd);
   }
 }

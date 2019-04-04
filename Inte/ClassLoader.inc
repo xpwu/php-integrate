@@ -12,8 +12,7 @@ namespace Inte;
 /**
  *
  * 路径规则：
- *  ClassLoader 中的文件路径都是相对于classLoader文件的路径
- *  建议classLoader文件的路径就为库的根路径
+ *  ClassLoader 中的文件路径都是相对于 rootDir 的路径
  *
  */
 
