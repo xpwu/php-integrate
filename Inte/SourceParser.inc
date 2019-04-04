@@ -12,8 +12,33 @@ namespace Inte;
 use Inte\Error\NormalError;
 
 class SourceParser {
-  function __construct(array $files) {
+
+  private const indexCache = "__index_cache__";
+
+  function __construct(array $files, bool $firstInte = false) {
     $this->files_ = $files;
+    $this->firstInte_ = $firstInte;
+  }
+
+  private function cacheIndex(int $i) {
+    // firstInte
+    if ($this->firstInte_) {
+      file_put_contents(sys_get_temp_dir()
+        . DIRECTORY_SEPARATOR . self::indexCache, $i);
+      return;
+    }
+    file_put_contents(Project::getInstance()->getBuildOutputDir()
+      . DIRECTORY_SEPARATOR . self::indexCache, $i);
+  }
+
+  private function getIndexFromCache():int {
+    // firstInte
+    if ($this->firstInte_) {
+      return (int)file_get_contents(sys_get_temp_dir()
+        . DIRECTORY_SEPARATOR . self::indexCache);
+    }
+    return (int)file_get_contents(Project::getInstance()->getBuildOutputDir()
+      . DIRECTORY_SEPARATOR . self::indexCache);
   }
 
   public function parse() {
@@ -23,11 +48,17 @@ class SourceParser {
     }
     $this->parsed_ = true;
 
-    $shm_id = ftok(__FILE__,'m');
-    $shareMemory = shm_attach($shm_id);
-    if (!defined('MayBeFailedIndex')) {
-      define('MayBeFailedIndex', 1);
-    }
+//    // firstInte 时 不是在Phar中 此时也不应有RunTimeEnv类的存在
+//    $pathName = __FILE__;
+//    // 在 phar 包中，ftok不能拿到文件自己，使用运行时的phar name 代替
+//    if (class_exists(RunTimeEnv::class)) {
+//      $pathName = RunTimeEnv::getInstance()->getRunTime()->getPharName();
+//    }
+//    $shm_id = ftok($pathName,'m');
+//    $shareMemory = shm_attach($shm_id);
+//    if (!defined('MayBeFailedIndex')) {
+//      define('MayBeFailedIndex', 1);
+//    }
 
     $nowFiles = $this->files_;
 
@@ -42,11 +73,13 @@ class SourceParser {
             throw new NormalError("pcntl_fork error!");
           case 0 : {
             error_reporting(0);
-            shm_put_var($shareMemory,MayBeFailedIndex, $i);
+//            shm_put_var($shareMemory,MayBeFailedIndex, $i);
+            $this->cacheIndex($i);
             // 一次子进程尽可能多的测试
             for (;$i < count($nowFiles); $i++) {
               include_once $nowFiles[$i];
-              shm_put_var($shareMemory,MayBeFailedIndex, $i+1);
+//              shm_put_var($shareMemory,MayBeFailedIndex, $i+1);
+              $this->cacheIndex($i+1);
             }
             exit(0);
           }
@@ -58,7 +91,8 @@ class SourceParser {
 //        }
 
         $j = $i;
-        $i = shm_get_var($shareMemory,MayBeFailedIndex);
+//        $i = shm_get_var($shareMemory,MayBeFailedIndex);
+        $i = $this->getIndexFromCache();
         for (;$j < $i; $j++) {
           $this->checkAndLoadAFile($nowFiles[$j]);
           $loadedFiles[] = $nowFiles[$j];
@@ -73,7 +107,7 @@ class SourceParser {
     }while(count($loadedFiles) != 0);
 
     $this->noParseFile_ = $nowFiles;
-    shm_detach($shareMemory);
+//    shm_detach($shareMemory);
   }
 
   private function checkAndLoadAFile(string $file) {
@@ -135,4 +169,6 @@ class SourceParser {
   private $allLoadedFiles_ = [];
 
   private $parsed_ = false;
+
+  private $firstInte_ = false;
 }

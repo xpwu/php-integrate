@@ -13,7 +13,7 @@ class InteBuilder {
   private const preRequire = [
     "SourceParser.inc",
     "FileFinder.inc",
-    "ClassLoader.inc"
+    "ClassLoader.inc",
   ];
 
   public function prepare() {
@@ -42,7 +42,7 @@ class InteBuilder {
       , ["**/*.inc", "*.inc"], [$classLoader->getFile()]);
     $allFiles = $finder->getAllFile();
 
-    $parser = new SourceParser($allFiles);
+    $parser = new SourceParser($allFiles, true);
     $parser->parse();
     $result = $parser->getResult();
 
@@ -71,6 +71,9 @@ class InteBuilder {
 
       return false;
     });
+    
+  Inte\RunTimeEnv::getInstance()->setRunTime(
+    new Inte\SimpleRunTime(__DIR__, __FILE__));
   
   $indexClass::main();
   
