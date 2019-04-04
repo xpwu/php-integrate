@@ -93,7 +93,7 @@ class InteBuilder {
   
 EOF;
 
-    file_put_contents("stub.php", $content);
+    file_put_contents("debugStub.php", $content);
 
   }
 
