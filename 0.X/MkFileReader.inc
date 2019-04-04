@@ -6,8 +6,8 @@
  * Time: 上午1:27
  */
 
-require_once ("Log.inc");
-require_once ("Utils.inc");
+require_once("Log.inc");
+require_once("Utils.inc");
 
 class MkFileReader {
 

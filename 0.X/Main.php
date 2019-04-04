@@ -6,8 +6,8 @@
  * Time: 下午12:09
  */
 
-require_once ("Integrater.inc");
-require_once ("Utils.inc");
+require_once("Integrater.inc");
+require_once("Utils.inc");
 
 
 class Main {

@@ -6,10 +6,10 @@
  * Time: 上午1:51
  */
 
-require_once ("Log.inc");
-require_once ("Utils.inc");
-require_once ("AutoChecker.inc");
-require_once ("MkFileReader.inc");
+require_once("Log.inc");
+require_once("Utils.inc");
+require_once("AutoChecker.inc");
+require_once("MkFileReader.inc");
 
 
 class Integrater {

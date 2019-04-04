@@ -6,9 +6,9 @@
  * Time: 下午6:19
  */
 
-require_once ("MkFileReader.inc");
-require_once ("Log.inc");
-require_once ("Utils.inc");
+require_once("MkFileReader.inc");
+require_once("Log.inc");
+require_once("Utils.inc");
 
 class AutoChecker {
   function __construct(MkFileReader $mkr) {
