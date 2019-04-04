@@ -1,0 +1,8 @@
+<?php
+
+$name = "InteCoreAnnotation";
+$version = "1.0";
+
+$dependencies = [];
+
+
