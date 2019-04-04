@@ -20,7 +20,7 @@ class SimpleRunTime implements RunTime {
     return $this->pharDir_;
   }
 
-  public function getPharName():string {
+  public function getPharBaseName():string {
     return $this->pharName_;
   }
 
