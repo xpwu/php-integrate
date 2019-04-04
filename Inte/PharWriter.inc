@@ -98,6 +98,12 @@ $env<?php
 
       return false;
     });
+    
+  // 用户的业务代码中不一定依赖了RunTime 可能不存在此类
+  if (class_exists('Inte\RunTimeEnv')) {
+    Inte\RunTimeEnv::getInstance()->setRunTime(
+      new Inte\SimpleRunTime(__DIR__, __FILE__));
+  }
   
   $indexClass::main();
   __HALT_COMPILER(); ?>
