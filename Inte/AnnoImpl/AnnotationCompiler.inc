@@ -99,7 +99,8 @@ class AnnotationCompiler {
       throw new NormalError(" AnnotationCompiler Failed!!!");
     }
 
-    $retFile = file_get_contents($this->sequenceFileName_);
+    $retFile = file_get_contents(Project::getInstance()->getRootDir()
+      . DIRECTORY_SEPARATOR . $this->sequenceFileName_);
     if ($retFile === "") {
       return [];
     }
@@ -170,6 +171,7 @@ class AnnotationCompiler {
       // 输入与输出都为0时， 才停止编译
     }while(count($inputClasses) != 0 || count($outputFile) != 0);
 
+    // put 时  phar 会自动去php里面的路径  已统一设置为 rootDir
     file_put_contents($this->sequenceFileName_
       , implode(";", $parsedFileBySequence));
 

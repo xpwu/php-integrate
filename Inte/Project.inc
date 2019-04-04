@@ -87,7 +87,7 @@ class Project {
    */
   private $conf;
 
-  private $rootDir = "";
+  private $rootDir = ".";
 
   private $buildDir = "inte";
 
