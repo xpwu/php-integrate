@@ -28,7 +28,7 @@ $publish = [
 ];
 
 $build = [
-  'target' => "", // 不需要添加 phar 后缀
-  'index_class' => ""
+  'target' => "",
+  'main_class' => ""
 ];
 

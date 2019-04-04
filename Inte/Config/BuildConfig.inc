@@ -14,7 +14,7 @@ use Inte\Project;
 class BuildConfig implements \Inte\Annotation\BuildConfig {
   function __construct(array $build) {
     $this->target = $build['target']??"main";
-    $this->indexClass = $build['index_class']??"NoIndexClass_PleaseSetIt";
+    $this->indexClass = $build['main_class']??"NoIndexClass_PleaseSetIt";
   }
 
   private $target = "main";
