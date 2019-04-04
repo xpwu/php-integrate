@@ -40,7 +40,8 @@ class Project {
 
   public function getAnnotationOutputDir():string {
     $ret = $this->buildDir . DIRECTORY_SEPARATOR . self::buildAnnotationSubDir;
-    if (!file_exists($ret)) {
+    // 因为 Phar::interceptFileFuncs(), 所以查找时需要加上 rootDir 变为绝对路径
+    if (!file_exists($this->rootDir . DIRECTORY_SEPARATOR . $ret)) {
       mkdir($ret, 0777, true);
     }
     return $ret;
@@ -48,7 +49,8 @@ class Project {
 
   public function getBuildOutputDir():string {
     $ret = $this->buildDir . DIRECTORY_SEPARATOR . 'dist';
-    if (!file_exists($ret)) {
+    // 因为 Phar::interceptFileFuncs(), 所以查找时需要加上 rootDir 变为绝对路径
+    if (!file_exists($this->rootDir . DIRECTORY_SEPARATOR . $ret)) {
       mkdir($ret, 0777, true);
     }
     return $ret;

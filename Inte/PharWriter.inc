@@ -82,7 +82,11 @@ $env<?php
   Phar::interceptFileFuncs();
   Phar::mapPhar();
 
-  set_include_path('phar://.__FILE__'. PATH_SEPARATOR . get_include_path());
+  // phar 中的stub __FILE__  __DIR__ 前面不带 phar:// 描述符
+  // phar 中的其他文件  __FILE__  __DIR__ 前面都带 phar:// 描述符
+
+  // 这句的书写方式很重要  "phar://".__FILE__  不能写错
+  set_include_path("phar://".__FILE__ . PATH_SEPARATOR . get_include_path());
 
   $req
   
