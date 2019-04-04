@@ -89,11 +89,11 @@ EOF;
     $builder->firstInte($classLoader);
     $files = array_values($builder->result_);
 
-    $phWriter = new PharWriter("phpinte");
+    $phWriter = new PharWriter("../bin/phpinte");
     $phWriter->write($files, $classLoader);
     $phWriter->setStub($classLoader, Main::class);
 
-    $phExeWriter = new PharExeWriter("phpinte");
+    $phExeWriter = new PharExeWriter("../bin/phpinte");
     $phExeWriter->write($files, $classLoader);
     $phExeWriter->setStub($classLoader, Main::class);
 
