@@ -28,6 +28,7 @@ Usage:  option
           -r show project root dir;
           -l the same to '--command printFiles';
           -d the same to '--command printDependence';
+          -p the same to '--command publish';
           
           --command: 'build', 'publish', 'printFiles', 'printDependence'
                 default is 'build'
@@ -36,7 +37,7 @@ EOF;
 
 
   function __construct() {
-    $option = getopt('ldrhvwc:', ['command'], $optind);
+    $option = getopt('ldrhvwpc:', ['command:'], $optind);
 
     $argv = $_SERVER['argv'];
     $pos_args = array_slice($argv, $optind);
