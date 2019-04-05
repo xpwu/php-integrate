@@ -131,6 +131,7 @@ abstract class Command {
 
   private function printPhpFileError($errorFiles) {
     foreach ($errorFiles as $errorFile) {
+      echo "error file: $errorFile " . PHP_EOL;
       require_once $errorFile;
     }
   }
