@@ -22,6 +22,9 @@ class Publish extends Command {
 
   protected function postParseFile(array $classFileMap
     , DependenceProcessor $processor): void {
+
+    $this->printStep("publish to repo");
+
     $project = Project::getInstance();
     $config = $project->getConfig();
     $name = $config->publishConfig->name;

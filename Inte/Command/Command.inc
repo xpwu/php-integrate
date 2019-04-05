@@ -30,11 +30,12 @@ abstract class Command {
     $allNeedParseFiles = array_merge($sequenceFilesByCompiler
       , array_diff($allProjectFiles, $sequenceFilesByCompiler));
     $this->parseFiles($allNeedParseFiles, $dependenceProcessor);
+
+    $this->printStep("", true);
   }
 
   private function findFile():array {
-    $this->step_++;
-    $this->logger_->info("$this->step_: find file...");
+    $this->printStep("find file");
 
     $fileFinder = new FileFinder($this->project_->getRootDir(), $this->config_->src
       , $this->config_->excludeSrc);
@@ -53,8 +54,7 @@ abstract class Command {
    * @return array [DependenceProcessor, AnnotationCompiler]
    */
   private function parseDependence(): array {
-    $this->step_++;
-    $this->logger_->info("$this->step_: parse dependence...");
+    $this->printStep("parse dependence");
 
     $dependenceProcessor = new DependenceProcessor(
       $this->config_->annoAndDepRepo
@@ -84,8 +84,8 @@ abstract class Command {
    */
   private function processAnnotation(array $allProjectFiles
     , AnnotationCompiler $compiler):array {
-    $this->step_++;
-    $this->logger_->info("$this->step_: process annotation...");
+    $this->printStep("process annotation");
+
     $sequenceFilesByCompiler
       = $compiler->compile($allProjectFiles);
     $this->postProcessAnnotation(array_values(array_diff($sequenceFilesByCompiler
@@ -96,8 +96,8 @@ abstract class Command {
 
   private function parseFiles(array $allNeedParseFiles
     , DependenceProcessor $processor) {
-    $this->step_++;
-    $this->logger_->info("$this->step_: parse files...");
+    $this->printStep("parse files");
+
     $allProjectFile = $allNeedParseFiles;
 
     $sourceParser = new SourceParser($allProjectFile);
@@ -135,6 +135,28 @@ abstract class Command {
     }
   }
 
+  protected function printStep(string $info, bool $end = false) {
+    if ($this->step_ != 0) {
+      $now = $this->currentMs();
+      $time = $now - $this->lastStepStart_;
+      $this->lastStepStart_ = $now;
+      echo " --- ${time}ms". PHP_EOL;
+    } else {
+      $this->lastStepStart_ = $this->currentMs();
+    }
+
+    if (!$end) {
+      $this->step_++;
+      echo "step $this->step_: $info... " ;
+    } else {
+      echo $info . PHP_EOL;
+    }
+  }
+
+  private function currentMs():int {
+    return (int)(microtime(true) * 1000);
+  }
+
   protected function postFindFile(array $files):void {}
   protected function postParseDependence(DependenceProcessor $processor
     , AnnotationCompiler $compiler):void {}
@@ -154,6 +176,8 @@ abstract class Command {
    * @var int
    */
   private $step_;
+  private $lastStepInfo = "";
+  private $lastStepStart_ = 0;
   /**
    * @var Project
    */

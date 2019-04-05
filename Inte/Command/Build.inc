@@ -20,6 +20,9 @@ class Build extends Command {
 
   protected function postParseFile(array $classMap
     , DependenceProcessor $processor): void {
+
+    $this->printStep("build phar");
+
     /**
      * 1、生成整体的classLoader 包括dependence的
      * 2、加入所有的文件，包括dependence的
