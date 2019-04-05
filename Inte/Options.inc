@@ -77,6 +77,10 @@ EOF;
       $option['command'] = 'printDependence';
     }
 
+    if (array_key_exists('p', $option)) {
+      $option['command'] = 'publish';
+    }
+
     $this->findRootDir();
 
     if (array_key_exists('r', $option)) {
