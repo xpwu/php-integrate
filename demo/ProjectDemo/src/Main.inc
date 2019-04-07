@@ -8,9 +8,12 @@
 
 namespace Demo;
 
+use PublishDemo\ClassA;
+
 class Main {
   static public function main() {
     new \Demo\CGI();
     new \Demo\SubSubCGI();
+    new ClassA();
   }
 }
