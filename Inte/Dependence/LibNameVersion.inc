@@ -12,6 +12,7 @@ namespace Inte\Dependence;
 use Inte\ClassLoader;
 use Inte\DependenceSpec;
 use Inte\FileFinder;
+use Inte\Project;
 
 class LibNameVersion extends Content {
 
@@ -19,9 +20,10 @@ class LibNameVersion extends Content {
     parent::__construct($position);
 
     $this->name_ = $name;
+    $this->rootDir_ = Project::getInstance()->getRootDir();
     // check
     if (!$isAnno) {
-      $spec = new DependenceSpec($this->getPosition()->getTopDir());
+      $spec = new DependenceSpec($this->rootDir_, $this->getPosition()->getTopDir());
       $spec->checkIsADependence();
     }
   }
@@ -30,7 +32,8 @@ class LibNameVersion extends Content {
    * @return array  [className=>file]
    */
   function getClasses(): array {
-    $classLoader = new ClassLoader($this->getPosition()->getTopDir(), $this->name_);
+    $classLoader = new ClassLoader($this->rootDir_
+      , $this->getPosition()->getTopDir(), $this->name_);
     return array_map(function ($file){
       return $this->getPosition()->getTopDir() . DIRECTORY_SEPARATOR . $file;
     }, $classLoader->read());
@@ -48,7 +51,7 @@ class LibNameVersion extends Content {
       return $this->subDependencies_;
     }
 
-    $spec = new DependenceSpec($this->getPosition()->getTopDir());
+    $spec = new DependenceSpec($this->rootDir_, $this->getPosition()->getTopDir());
     $this->subDependencies_ = [];
 
     foreach ($spec->read()[DependenceSpec::DependenciesKey] as $value) {
@@ -63,6 +66,7 @@ class LibNameVersion extends Content {
   }
 
   private $name_ = "";
+  private $rootDir_;
 
   private $subDependencies_ = null;
 }

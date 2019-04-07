@@ -19,13 +19,15 @@ class DependenceSpec {
 
   private const FileName = "__spec.conf__.hphp";
 
-  function __construct(string $dir) {
+  function __construct(string $rootDir, string $dir) {
     // 去掉前面的  ./
     if ($dir == ".") {
       $this->dir_ = "";
     } else {
       $this->dir_ = $dir . DIRECTORY_SEPARATOR;
     }
+
+    $this->rootDir_ = $rootDir;
   }
 
   public function write(string $name, string $version
@@ -65,7 +67,10 @@ EOF;
     $annotationServer = [];
     $dependencies = [];
 
-    require_once $this->dir_ . self::FileName;
+    // 这里必须使用 require 而不能使用require_once。因为需要每一个Spec的实例中 都require一次
+    // $name 等变量才会有值。由于spec文件中 只有变量  没有函数与类等全局的定义，而require 是在
+    // read 函数中执行，变量作用域仅在此函数中，所以不会造成重复定义的情况
+    require $this->rootDir_ .DIRECTORY_SEPARATOR. $this->dir_ . self::FileName;
 
     $this->result_ = [self::NameKey=>$name, self::VersionKey=>$version
       , self::DependenciesKey=>$dependencies];
@@ -101,5 +106,6 @@ EOF;
   }
 
   private $dir_;
+  private $rootDir_;
   private $result_ = null;
 }

@@ -34,7 +34,7 @@ class PublishWriter {
     $classLoader = new ClassLoader($this->rootDir_, $dir, $this->name_);
     $classLoader->write($classFileMap);
 
-    $spec = new DependenceSpec($dir);
+    $spec = new DependenceSpec($this->rootDir_, $dir);
     $spec->write($this->name_, $this->version_
       , $dependencies, $allServices);
 

@@ -18,7 +18,8 @@ class AnnotationProcessor {
     $this->name_ = $arr[0];
     $this->version_ = $arr[1];
 
-    $spec = new DependenceSpec($this->getTopDir());
+    $spec = new DependenceSpec(Project::getInstance()->getRootDir()
+      , $this->getTopDir());
     $spec->checkIsAAnnotationProcessor();
 
     $this->self_ = Factory::convertFromAnnoProcessor($this->repo_
@@ -29,7 +30,8 @@ class AnnotationProcessor {
    * @return string[]
    */
   public function getServersString(): array {
-    $spec = new DependenceSpec($this->getTopDir());
+    $spec = new DependenceSpec(Project::getInstance()->getRootDir()
+      , $this->getTopDir());
     return $spec->read()[DependenceSpec::AnnotationServerKey];
   }
 
@@ -37,7 +39,8 @@ class AnnotationProcessor {
    * @return Dependence[]
    */
   public function getDependencies(): array {
-    $spec = new DependenceSpec($this->getTopDir());
+    $spec = new DependenceSpec(Project::getInstance()->getRootDir()
+      , $this->getTopDir());
     $dependenciesStr = $spec->read()[DependenceSpec::DependenciesKey];
     $ret = [];
     foreach ($dependenciesStr as $value) {
