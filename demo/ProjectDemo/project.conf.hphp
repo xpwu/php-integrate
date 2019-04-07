@@ -8,15 +8,16 @@
 
 
 
-$src = ['*.inc', '**/*.inc'];
+$src = ['src/*.inc', 'src/**/*.inc', "src/*/*/*.inc", "src/*/*/*/*.inc"
+  , "src/*/*/*/*/*.inc", "src/*/*/*/*/*/*.inc"];
 
-$exclude_src = ['third_party'];
+$exclude_src = [];
 
-//$anno_and_dep_repo = "";
+$anno_and_dep_repo = "repo";
 //
 //$annotation_processors = [];
 //
-//$dependencies = [];
+$dependencies = ['PublishDemo:0.0'];
 
 //$publish = [
 //  'repo'=> "",

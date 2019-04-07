@@ -16,6 +16,5 @@ class CGI {
     new Test();
     new \Subdir2\Test();
     new \Glob\Test();
-    new \ThirdParty\Test();
   }
 }

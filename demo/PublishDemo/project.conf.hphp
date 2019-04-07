@@ -1,0 +1,33 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: xpwu
+ * Date: 2019/3/23
+ * Time: 6:39 PM
+ */
+
+
+
+$src = ['src/*.inc', 'src/**/*.inc', "src/*/*/*.inc", "src/*/*/*/*.inc"
+  , "src/*/*/*/*/*.inc", "src/*/*/*/*/*/*.inc"];
+
+$exclude_src = [];
+
+//$anno_and_dep_repo = "";
+//
+//$annotation_processors = [];
+//
+//$dependencies = [];
+
+$publish = [
+  'repo'=> "../repo",
+  'name'=> "PublishDemo",
+  'version'=>"0.0",
+  'annotation_services' => []
+];
+
+//$build = [
+//  'target' => "demo",
+//  'main_class' => "Demo\Main"
+//];
+
