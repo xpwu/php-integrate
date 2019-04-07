@@ -22,7 +22,9 @@ class Options {
   private const Usage = <<<EOF
 Usage:  option
   option: -h show this help;
-          -c conf file name, default is project.conf.hphp;
+          -c conf file name, default is project.conf.hphp.
+              Find the dir automatically from the current dir to sys root dir('/').
+              The arg can have a absolute dir, ;
           -v show version;
           -w show path;
           -r show project root dir;
@@ -66,7 +68,13 @@ EOF;
     }
 
     if (array_key_exists('c', $option)) {
-      $this->configFileName = $option['c'];
+      if (strpos($option['c'], '/') == 0) {
+        $this->configFileName = basename($option['c']);
+        // 从这里开始查找 为后续rootDir 做准备
+        chdir(dirname($option['c']));
+      } else {
+        $this->configFileName = $option['c'];
+      }
     }
 
     if (array_key_exists('l', $option)) {
