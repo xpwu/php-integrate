@@ -27,11 +27,11 @@ class PublishWriter {
 
     $repoLib = new RepoLib($this->repo_, $this->name_, $this->version_);
     $dir = $repoLib->getTopDir();
-    FileSystem::delAllDirAndFile($dir);
+    FileSystem::delAllDirAndFile($this->rootDir_ . DIRECTORY_SEPARATOR .$dir);
     @mkdir($dir, 0777, true);
 
 
-    $classLoader = new ClassLoader($dir, $this->name_);
+    $classLoader = new ClassLoader($this->rootDir_, $dir, $this->name_);
     $classLoader->write($classFileMap);
 
     $spec = new DependenceSpec($dir);

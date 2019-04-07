@@ -19,13 +19,15 @@ namespace Inte;
 class ClassLoader {
   private const FileName = "__InteClassLoader__.inc";
 
-  function __construct(string $dir, string $libName = "Project") {
+  function __construct(string $rootDir, string $dir, string $libName = "Project") {
     // 去掉前面的  ./
     if ($dir == ".") {
       $this->dir_ = "";
     } else {
       $this->dir_ = $dir . DIRECTORY_SEPARATOR;
     }
+
+    $this->rootDir_ = $rootDir;
 
     $this->libName_ = $libName;
   }
@@ -66,7 +68,8 @@ EOF;
    * @return array [class => file]
    */
   public function read():array {
-    require_once $this->dir_ . self::FileName;
+    require_once $this->rootDir_ . DIRECTORY_SEPARATOR
+      . $this->dir_ . self::FileName;
     /**
      * @var array
      */
@@ -86,5 +89,5 @@ EOF;
 
   private $dir_;
   private $libName_;
-
+  private $rootDir_;
 }
