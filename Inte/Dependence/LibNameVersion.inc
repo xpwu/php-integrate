@@ -16,10 +16,9 @@ use Inte\Project;
 
 class LibNameVersion extends Content {
 
-  function __construct(Position $position, string $name, bool $isAnno = false) {
+  function __construct(Position $position, bool $isAnno = false) {
     parent::__construct($position);
 
-    $this->name_ = $name;
     $this->rootDir_ = Project::getInstance()->getRootDir();
     // check
     if (!$isAnno) {
@@ -33,7 +32,7 @@ class LibNameVersion extends Content {
    */
   function getClasses(): array {
     $classLoader = new ClassLoader($this->rootDir_
-      , $this->getPosition()->getTopDir(), $this->name_);
+      , $this->getPosition()->getTopDir(), $this->getPosition()->getName());
     return array_map(function ($file){
       return $this->getPosition()->getTopDir() . DIRECTORY_SEPARATOR . $file;
     }, $classLoader->read());
@@ -65,7 +64,6 @@ class LibNameVersion extends Content {
     return $this->getFilesByFilter(['**'], [DependenceSpec::getFileName()]);
   }
 
-  private $name_ = "";
   private $rootDir_;
 
   private $subDependencies_ = null;

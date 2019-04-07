@@ -52,6 +52,7 @@ abstract class Command {
 
   /**
    * @return array [DependenceProcessor, AnnotationCompiler]
+   * @throws
    */
   private function parseDependence(): array {
     $this->printStep("parse dependence");
@@ -120,10 +121,10 @@ abstract class Command {
   private function checkAllClass(DependenceProcessor $processor, array $newClasses) {
     foreach ($processor->getMergeResult() as $dependence) {
       foreach (array_keys($dependence->getClasses()) as $class) {
-        if (array_key_exists($newClasses, $class)) {
+        if (array_key_exists($class, $newClasses)) {
           throw new NormalError(
-            "$class are again defined both "
-            .$dependence->getName() ." and Project://{$newClasses[$class]}");
+            "$class are again defined both dependence:"
+            .$dependence->getName() ." and Project: <root_dir>/{$newClasses[$class]}");
         }
       }
     }
@@ -177,7 +178,6 @@ abstract class Command {
    * @var int
    */
   private $step_;
-  private $lastStepInfo = "";
   private $lastStepStart_ = 0;
   /**
    * @var Project

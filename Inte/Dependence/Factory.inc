@@ -28,7 +28,7 @@ class Factory {
         $position = new RepoLib($repo, $name, $version);
       }
 
-      $content = new LibNameVersion($position, $repo);
+      $content = new LibNameVersion($position);
 
       return new Dependence($position, $content);
     }
@@ -61,7 +61,7 @@ class Factory {
       $position = new RepoLib($repo, $name, $version);
     }
 
-    $content = new LibNameVersion($position, $repo, true);
+    $content = new LibNameVersion($position, true);
 
     return new Dependence($position, $content);
   }
