@@ -142,14 +142,14 @@ abstract class Command {
       $now = $this->currentMs();
       $time = $now - $this->lastStepStart_;
       $this->lastStepStart_ = $now;
-      echo " --- ${time}ms". PHP_EOL;
+      echo "   --- ${time}ms". PHP_EOL;
     } else {
       $this->lastStepStart_ = $this->currentMs();
     }
 
     if (!$end) {
       $this->step_++;
-      echo "step $this->step_: $info... " ;
+      echo "step $this->step_: $info... ".PHP_EOL ;
     } else {
       echo $info . PHP_EOL;
     }
