@@ -187,8 +187,6 @@ class DependenceProcessor {
     foreach ($dependence->getSubDependencies() as $subDependency) {
       $this->printDeepFirstly($prefix . "  |", $subDependency);
     }
-
-    echo $prefix . PHP_EOL;
   }
 
   private $repo_;
