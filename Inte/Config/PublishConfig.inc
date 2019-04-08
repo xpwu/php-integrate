@@ -42,4 +42,14 @@ class PublishConfig implements \Inte\Annotation\PublishConfig {
   function getAnnotationServices(): array {
     return $this->annotationServices;
   }
+
+  public function isValid():bool {
+    if ($this->repo === null || $this->repo === ""
+      || $this->name === null || $this->name === ""
+      || $this->version === null || $this->version === "") {
+      return false;
+    }
+
+    return true;
+  }
 }

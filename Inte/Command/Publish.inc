@@ -20,6 +20,11 @@ use Inte\PublishWriter;
 
 class Publish extends Command {
 
+  /**
+   * @param array $classFileMap
+   * @param DependenceProcessor $processor
+   * @throws \ReflectionException
+   */
   protected function postParseFile(array $classFileMap
     , DependenceProcessor $processor): void {
 
@@ -27,6 +32,11 @@ class Publish extends Command {
 
     $project = Project::getInstance();
     $config = $project->getConfig();
+
+    if (!$config->publishConfig->isValid()) {
+      throw new NormalError('$publish config is error!');
+    }
+
     $name = $config->publishConfig->name;
     $version = $config->publishConfig->version;
 
