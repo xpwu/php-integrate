@@ -18,6 +18,8 @@ class PrintDependence extends Command {
   protected function postParseDependence(DependenceProcessor $processor
     , AnnotationCompiler $compiler):void {
 
+    echo PHP_EOL;
+
     echo '<dependence>' . PHP_EOL;
     $processor->printDependencies("  |");
 

@@ -14,7 +14,9 @@ use Inte\Error\OK;
 
 class PrintAllProjectFiles extends Command {
   protected function postFindFile(array $files):void {
-    echo implode(PHP_EOL, $files) . PHP_EOL;
+    echo PHP_EOL . implode(PHP_EOL, $files) . PHP_EOL;
+
+    echo PHP_EOL. count($files). " files" . PHP_EOL;
 
     throw new OK();
   }
