@@ -23,7 +23,7 @@ phpinte 主要实现把php代码打包为phar，支持代码的基础检查、�
 * 1、依赖的使用  
  1.1 使用phpinte发布的依赖。name:version 的格式  
  1.2 使用其他非phpinte发布的依赖。name/version/[*.php;class@file;path/to/index.php] 的格式。其中name与version 是加入依赖到仓库时建立的文件夹，依赖的原文件在version文件夹下  
-1.3 依赖可以放在repo指定的位置，phpinte将把repo中的依赖打包进phar中；也可以放在系统的include_path中，include_path中的依赖库不会打包进phar，所以集成环境与运行环境中都需要把三方库放到include_path中，确保集成与运行时都能找到。
+ 1.3 依赖可以放在repo指定的位置，phpinte将把repo中的依赖打包进phar中；也可以放在系统的include_path中，include_path中的依赖库不会打包进phar，所以集成环境与运行环境中都需要把三方库放到include_path中，确保集成与运行时都能找到。
 * 2、依赖的发布  
 需要在project.conf.hphp中配置 $publish = ['repo'=> "",'name'=> "",'version'=>""]; 然后运行phpinte -p 即可发布name:version 到 $publish["repo"]中。
 * 3、依赖传递与合并。phpinte 使用最高版本的选取策略。phpinte -d 可以看到所有的依赖
@@ -41,5 +41,8 @@ phpinte 主要实现把php代码打包为phar，支持代码的基础检查、�
 
 phpinte 提供一个核心库与一个注解核心库，在写应用代码或者注解时，可以依赖此核心库。需要下载相应的库到repo文件夹中即可。
 
+## 六、代码要求
+
+使用phpinte集成或者发布的代码中，不能使用Inte与__Inte__作为第一命名空间，否则可能产生命名冲突。
 
 
