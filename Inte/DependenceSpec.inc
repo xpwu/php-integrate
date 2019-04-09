@@ -32,7 +32,9 @@ class DependenceSpec {
 
   public function write(string $name, string $version
     , array $dependencies, array $annotationServer = []) {
-    $arr = implode(",", $dependencies);
+    $arr = implode(",", array_map(function (string $value){
+      return '"' . $value . '"';
+    }, $dependencies));
 
     $annServer = "";
     if (count($annotationServer) != 0) {

@@ -64,5 +64,5 @@ class RequireFile extends Content {
    * @var string[]
    */
   private $globFiles_ = [];
-  private $classFileMap_;
+  private $classFileMap_ = [];
 }
