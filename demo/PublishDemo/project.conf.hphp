@@ -8,8 +8,7 @@
 
 
 
-$src = ['src/*.inc', 'src/**/*.inc', "src/*/*/*.inc", "src/*/*/*/*.inc"
-  , "src/*/*/*/*/*.inc", "src/*/*/*/*/*/*.inc"];
+$src = ['src/**/*.inc'];
 
 $exclude_src = [];
 
