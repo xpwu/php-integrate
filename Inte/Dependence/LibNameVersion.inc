@@ -11,7 +11,6 @@ namespace Inte\Dependence;
 
 use Inte\ClassLoader;
 use Inte\DependenceSpec;
-use Inte\FileFinder;
 use Inte\Project;
 
 class LibNameVersion extends Content {
@@ -61,7 +60,7 @@ class LibNameVersion extends Content {
   }
 
   function getAllNeedFilesForInte(): array {
-    return $this->getFilesByFilter(['**'], [DependenceSpec::getFileName()]);
+    return array_values($this->getClasses());
   }
 
   private $rootDir_;

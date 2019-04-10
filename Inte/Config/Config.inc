@@ -9,6 +9,8 @@
 namespace Inte\Config;
 
 
+use Inte\FileSystem;
+
 class Config implements \Inte\Annotation\Config {
   function __construct(string $confFile) {
     require_once $confFile;

@@ -28,6 +28,11 @@ class Project {
 
     $this->delDir($this->buildDir);
 
+    $this->conf->src = FileSystem::preGlobArray($this->conf->src
+      , FileSystem::dirDeep($this->rootDir));
+    $this->conf->excludeSrc = FileSystem::preGlobArray($this->conf->excludeSrc
+      , FileSystem::dirDeep($this->rootDir));
+
     set_include_path($rootDir . PATH_SEPARATOR . get_include_path());
   }
 

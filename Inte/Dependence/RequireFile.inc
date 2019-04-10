@@ -11,6 +11,8 @@ namespace Inte\Dependence;
 
 use Inte\Dependence;
 use Inte\FileFinder;
+use Inte\FileSystem;
+use Inte\Project;
 
 class RequireFile extends Content {
 
@@ -53,7 +55,8 @@ class RequireFile extends Content {
 
   function getAllNeedFilesForInte(): array {
     $fileFinder = new FileFinder($this->getPosition()->getTopDir()
-      , ['**']);
+      , FileSystem::preGlobArray(['**/*']
+        , FileSystem::dirDeep(Project::getInstance()->getRootDir())));
 
     return array_map(function ($file){
       return $this->getPosition()->getTopDir(). DIRECTORY_SEPARATOR . $file;

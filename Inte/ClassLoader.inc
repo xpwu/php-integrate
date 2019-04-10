@@ -17,7 +17,7 @@ namespace Inte;
  */
 
 class ClassLoader {
-  private const FileName = "__InteClassLoader__.inc";
+  public const FileName = "__InteClassLoader__.inc";
 
   function __construct(string $rootDir, string $dir, string $libName = "Project") {
     // 去掉前面的  ./
