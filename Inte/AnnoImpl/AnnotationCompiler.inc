@@ -142,7 +142,8 @@ class AnnotationCompiler {
        */
       $server = new $item();
       $server->init(new SimpleLogger(), $filer
-        , Project::getInstance()->getConfig());
+        , Project::getInstance()->getConfig()
+        , Project::getInstance()->getRootDir());
       $this->servers_[] = $server;
     }
 
@@ -212,5 +213,8 @@ class AnnotationCompiler {
    */
   private $phpFilers_ = [];
 
+  /**
+   * @var AnnotationCompilerStrategyOfDependency
+   */
   private $strategyOfDependency_;
 }
