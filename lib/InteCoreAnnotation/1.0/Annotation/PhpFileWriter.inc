@@ -10,6 +10,7 @@ namespace Inte\Annotation;
 
 
 interface PhpFileWriter {
+  function dontInteOrPublish();
   function write(string $content);
   function rewrite(string $content);
 }

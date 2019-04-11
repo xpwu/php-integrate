@@ -11,4 +11,5 @@ namespace Inte\Annotation;
 
 interface PhpFiler {
   function createSourceFile(string $fileDirAndName): PhpFileWriter;
+  function modifyOutDirToRootDir():void ;
 }

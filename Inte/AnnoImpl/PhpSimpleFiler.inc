@@ -9,9 +9,15 @@
 namespace Inte\Annotation;
 
 
+use Inte\Project;
+
 class PhpSimpleFiler implements PhpFiler {
   public function __construct(string $outputDir) {
     $this->outputDir_ = $outputDir;
+  }
+
+  public function modifyOutDirToRootDir(): void {
+    $this->outputDir_ = Project::getInstance()->getRootDir();
   }
 
   public function createSourceFile(string $fileDirAndName):PhpFileWriter {
