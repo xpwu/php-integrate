@@ -11,12 +11,13 @@ namespace Inte\Annotation;
 
 use Inte\Config\Config;
 
-interface AbstractAnnotationServer {
-  function init(Logger $logger, PhpFiler $filer, Config $config):void;
+abstract class AbstractAnnotationServer {
+  abstract function init(Logger $logger, PhpFiler $filer, Config $config):void;
 
   /**
    * @param string[] $classes
    */
-  function process(array $classes):void;
+  abstract function process(array $classes):void;
 
+  public function processDependencyClasses(array $dependencyClasses):void {}
 }

@@ -9,6 +9,8 @@
 
 namespace Inte\Command;
 
+use Inte\Annotation\AnnoCompilerStrategyOfCompileDependence;
+use Inte\Annotation\AnnotationCompilerStrategyOfDependency;
 use Inte\ClassLoader;
 use Inte\Command;
 use Inte\Dependence;
@@ -72,6 +74,12 @@ class Build extends Command {
       , $project->getConfig()->buildConfig->getIndexClass()
       , $requireFiles);
 
+  }
+
+  protected function getAnnoCompilerStrategyOfDependency()
+    : AnnotationCompilerStrategyOfDependency {
+
+    return new AnnoCompilerStrategyOfCompileDependence();
   }
 
   private function getAllFiles():array {

@@ -10,6 +10,7 @@ namespace Inte;
 
 
 use Inte\Annotation\AbstractAnnotationServer;
+use Inte\Annotation\AnnotationCompilerStrategyOfDependency;
 use Inte\Annotation\PhpSimpleFiler;
 use Inte\Error\NormalError;
 
@@ -21,6 +22,7 @@ class AnnotationCompiler {
    */
   function __construct(string $repo, array $annotationProcessors
     , string $buildAnnotationDir) {
+
     $this->repo_ = $repo;
 
     foreach ($annotationProcessors as $annotationProcessor) {
@@ -34,6 +36,11 @@ class AnnotationCompiler {
     @mkdir($this->tempDir_, 0777, true);
 
     $this->sequenceFileName_ = $this->tempDir_. DIRECTORY_SEPARATOR . "sequence";
+  }
+
+  public function setStrategy(
+    AnnotationCompilerStrategyOfDependency $strategyOfDependency) {
+    $this->strategyOfDependency_ = $strategyOfDependency;
   }
 
   public function init() {
@@ -60,6 +67,10 @@ class AnnotationCompiler {
     $this->dependenceProcessor_->printDependencies($prefix);
   }
 
+  /**
+   * @return DependenceProcessor
+   * @throws \Exception
+   */
   public function getDependenceProcessor():DependenceProcessor {
     if (!isset($this->dependenceProcessor_)) {
       throw new \Exception(
@@ -139,6 +150,8 @@ class AnnotationCompiler {
 
   private function compileInAnnotationEnvironment(array $allFiles) {
 
+    $this->strategyOfDependency_->processBy($this->servers_);
+
     // 保存解析的文件的顺序
     $parsedFileBySequence = [];
 
@@ -198,4 +211,6 @@ class AnnotationCompiler {
    * @var PhpSimpleFiler[]
    */
   private $phpFilers_ = [];
+
+  private $strategyOfDependency_;
 }

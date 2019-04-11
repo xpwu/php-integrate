@@ -10,6 +10,8 @@
 
 namespace Inte;
 
+use Inte\Annotation\AnnoCompilerStrategyOfNotCompileDependency;
+use Inte\Annotation\AnnotationCompilerStrategyOfDependency;
 use Inte\Config\Config;
 use Inte\Error\NormalError;
 
@@ -23,6 +25,9 @@ abstract class Command {
 
     $allProjectFiles = $this->findFile();
 
+    /**
+     * @var $dependenceProcessor DependenceProcessor
+     */
     list($dependenceProcessor, $annoCompiler) = $this->parseDependence();
 
     $sequenceFilesByCompiler = $this->processAnnotation($allProjectFiles, $annoCompiler);
@@ -73,6 +78,17 @@ abstract class Command {
 
     $dependenceProcessor->updateVersionByOther($annoDepProcessor);
     $annoDepProcessor->updateVersionByOther($dependenceProcessor);
+
+    $allDependencyClasses = [];
+    foreach ($dependenceProcessor->getMergeResult() as $dependence) {
+      $allDependencyClasses = array_merge($allDependencyClasses
+        , array_keys($dependence->getClasses()));
+    }
+    $allDependencyClasses = array_unique($allDependencyClasses);
+    $strategy = $this->getAnnoCompilerStrategyOfDependency();
+    $strategy->setDependencyClasses($allDependencyClasses);
+
+    $compiler->setStrategy($strategy);
 
     $this->postParseDependence($dependenceProcessor, $compiler);
 
@@ -157,6 +173,11 @@ abstract class Command {
 
   private function currentMs():int {
     return (int)(microtime(true) * 1000);
+  }
+
+  protected function getAnnoCompilerStrategyOfDependency()
+    :AnnotationCompilerStrategyOfDependency {
+    return new AnnoCompilerStrategyOfNotCompileDependency();
   }
 
   protected function postFindFile(array $files):void {}
