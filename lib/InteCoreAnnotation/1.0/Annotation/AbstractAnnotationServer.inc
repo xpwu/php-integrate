@@ -12,7 +12,8 @@ namespace Inte\Annotation;
 use Inte\Config\Config;
 
 abstract class AbstractAnnotationServer {
-  abstract function init(Logger $logger, PhpFiler $filer, Config $config):void;
+  function init(Logger $logger, PhpFiler $filer
+    , Config $config, string $projectRootDir):void {}
 
   /**
    * @param string[] $classes
