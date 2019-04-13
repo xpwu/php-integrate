@@ -84,7 +84,7 @@ class AnnotationCompiler {
    *      主要为了加快项目环境解析文件的速度。
    *      不一定包含了全部的输入文件$files
    */
-  public function compile(array $files):array {
+  public function compile(array $files, bool $isBuild):array {
 
     // 因为两个进程没有同时操作同一数据的情况，所以不用考虑数据互斥的问题
 
@@ -95,7 +95,7 @@ class AnnotationCompiler {
       case 0 : {
 //        error_reporting(0);
         try {
-          $this->initInAnnotationEnvironment();
+          $this->initInAnnotationEnvironment($isBuild);
           $this->compileInAnnotationEnvironment($files);
         }catch (NormalError $error) {
           echo $error;
@@ -119,7 +119,7 @@ class AnnotationCompiler {
     return explode(";", $retFile);
   }
 
-  private function initInAnnotationEnvironment() {
+  private function initInAnnotationEnvironment(bool $isBuild) {
     /**
      * 只是被注解编译器使用的依赖在注解处理环境中加载，不能影响到项目环境
      */
@@ -143,7 +143,8 @@ class AnnotationCompiler {
       $server = new $item();
       $server->init(new SimpleLogger(), $filer
         , Project::getInstance()->getConfig()
-        , Project::getInstance()->getRootDir());
+        , Project::getInstance()->getRootDir()
+        , $isBuild);
       $this->servers_[] = $server;
     }
 

@@ -76,10 +76,14 @@ class Build extends Command {
 
   }
 
-  protected function getAnnoCompilerStrategyOfDependency()
-    : AnnotationCompilerStrategyOfDependency {
+//  protected function getAnnoCompilerStrategyOfDependency()
+//    : AnnotationCompilerStrategyOfDependency {
+//
+//    return new ();
+//  }
 
-    return new AnnoCompilerStrategyOfCompileDependence();
+  protected function isBuild(): bool {
+    return true;
   }
 
   private function getAllFiles():array {

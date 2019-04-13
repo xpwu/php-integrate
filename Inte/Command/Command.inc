@@ -10,6 +10,7 @@
 
 namespace Inte;
 
+use Inte\Annotation\AnnoCompilerStrategyOfCompileDependence;
 use Inte\Annotation\AnnoCompilerStrategyOfNotCompileDependency;
 use Inte\Annotation\AnnotationCompilerStrategyOfDependency;
 use Inte\Config\Config;
@@ -104,7 +105,7 @@ abstract class Command {
     $this->printStep("process annotation");
 
     $sequenceFilesByCompiler
-      = $compiler->compile($allProjectFiles);
+      = $compiler->compile($allProjectFiles, $this->isBuild());
     $this->postProcessAnnotation(array_values(array_diff($sequenceFilesByCompiler
       , $allProjectFiles)));
 
@@ -177,7 +178,11 @@ abstract class Command {
 
   protected function getAnnoCompilerStrategyOfDependency()
     :AnnotationCompilerStrategyOfDependency {
-    return new AnnoCompilerStrategyOfNotCompileDependency();
+    return new AnnoCompilerStrategyOfCompileDependence();
+  }
+
+  protected function isBuild():bool {
+    return false;
   }
 
   protected function postFindFile(array $files):void {}

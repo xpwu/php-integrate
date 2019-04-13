@@ -36,8 +36,8 @@ phpinte 主要实现把php代码打包为phar，支持代码的基础检查、�
 注解的发布与依赖很类似，但是需要在$publish['annotation_services'] = []中 填写此注解提供的所有注解服务的类，此服务类必须继承于 Inte\AbstractAnnotationServer 类。注解的编写需要依赖phpinte提供的注解核心库[核心库](#corelib).  
 * 3、注解的运行  
 注解process函数会把属于本工程(不包括依赖库)所有的输入类做处理，可以输出新的类文件，输出的.inc文件可能又会当成输入进入所有的注解服务的process函数中再次被注解处理，如此循环直到输入文件数为0且输出文件数为0时结束。注解不能对源文件做修改，但是可以对自己输出的文件做修改，但是修改后的文件不会再次作为输入被注解服务处理。（注：非.inc文件不会作为下次注解的输入）  
-如果是build命令，所有的依赖类都会被注解服务的processDependencyClasses函数处理一次，输出的.inc文件会与本工程的文件一样被process函数处理。  
-以上输出的所有.inc文件可能会被最终集成进phar中(build命令时)或者发布到repo中(publish命令时)。
+所有的依赖类都会被注解服务的processDependencyClasses函数处理一次，输出的.inc文件会与本工程的文件一样被process函数处理。  
+以上输出的所有.inc文件可能(如下'注'的说明)会被最终集成进phar中(build命令时)或者发布到repo中(publish命令时)。  
 **注：所有的非.inc文件或者被writer::dontInteOrPublish明确指定的.inc文件不会再次被处理器处理，也不会被集成或者发布**
 
 ## <a name="coreLib"></a>五、核心库
