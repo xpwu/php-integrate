@@ -127,7 +127,7 @@ class AnnotationCompiler {
 
     $serversStr = [];
     foreach ($this->processors_ as $annotationProcessor) {
-      $this->serversStr_ = array_merge($serversStr
+      $serversStr = array_merge($serversStr
         , $annotationProcessor->getServersString());
     }
     array_unique($serversStr);
@@ -172,9 +172,9 @@ class AnnotationCompiler {
 
       $outputFile = [];
       foreach ($this->phpFilers_ as $filer) {
-        $outputFile[] = array_map(function ($value){
+        $outputFile = array_merge($outputFile, array_map(function ($value){
           return $this->distDir_ . DIRECTORY_SEPARATOR . $value;
-        }, $filer->getAllNewFileAndClear());
+        }, $filer->getAllNewFileAndClear()));
       }
 
       // 只是添加.inc结束的文件 再次输入注解处理器

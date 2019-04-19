@@ -18,12 +18,13 @@ class AnnotationProcessor {
     $this->name_ = $arr[0];
     $this->version_ = $arr[1];
 
-    $spec = new DependenceSpec(Project::getInstance()->getRootDir()
-      , $this->getTopDir());
-    $spec->checkIsAAnnotationProcessor();
-
     $this->self_ = Factory::convertFromAnnoProcessor($this->repo_
       , $this->name_, $this->version_);
+
+    $spec = new DependenceSpec(Project::getInstance()->getRootDir()
+      , $this->self_->getTopDir());
+    $spec->checkIsAAnnotationProcessor();
+
   }
 
   /**

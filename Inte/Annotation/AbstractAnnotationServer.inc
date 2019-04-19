@@ -14,7 +14,7 @@ use Inte\Config\Config;
 abstract class AbstractAnnotationServer {
   function init(Logger $logger, PhpFiler $filer
     , Config $config, string $projectRootDir
-    , bool $isBuild_):void {}
+    , bool $isBuild):void {}
 
   /**
    * @param string[] $classes
