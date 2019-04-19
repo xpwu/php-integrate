@@ -9,8 +9,6 @@
 namespace Inte\Annotation;
 
 
-use Inte\Config\Config;
-
 abstract class AbstractAnnotationServer {
   function init(Logger $logger, PhpFiler $filer
     , Config $config, string $projectRootDir

@@ -26,7 +26,8 @@ class Project {
     $this->rootDir = $rootDir;
     $this->buildDir = $this->conf->buildDir . DIRECTORY_SEPARATOR ."inte";
 
-    $this->delDir($this->buildDir);
+    $this->delDir($this->rootDir
+      . DIRECTORY_SEPARATOR . $this->buildDir);
 
     $this->conf->src = FileSystem::preGlobArray($this->conf->src
       , FileSystem::dirDeep($this->rootDir));

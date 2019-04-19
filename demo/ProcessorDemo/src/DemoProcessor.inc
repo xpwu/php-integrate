@@ -5,9 +5,9 @@ namespace ProcessorDemo;
 
 
 use Inte\Annotation\AbstractAnnotationServer;
+use Inte\Annotation\Config;
 use Inte\Annotation\Logger;
 use Inte\Annotation\PhpFiler;
-use Inte\Config\Config;
 
 class DemoProcessor extends AbstractAnnotationServer {
 
