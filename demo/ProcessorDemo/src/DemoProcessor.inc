@@ -1,0 +1,54 @@
+<?php
+
+
+namespace ProcessorDemo;
+
+
+use Inte\Annotation\AbstractAnnotationServer;
+use Inte\Annotation\Logger;
+use Inte\Annotation\PhpFiler;
+use Inte\Config\Config;
+
+class DemoProcessor extends AbstractAnnotationServer {
+
+  /**
+   * @var Logger
+   */
+  private $logger_;
+
+  /**
+   * @var PhpFiler
+   */
+  private $filer_;
+
+  /**
+   * @param string[] $classes
+   */
+  function process(array $classes): void {
+    foreach ($classes as $class) {
+      $this->logger_->info($class);
+      $cgi = new \ReflectionClass($class);
+
+      if ($cgi->isSubclassOf('\Demo\CGI')) {
+        $this->logger_->info("find subclass of \Demo\CGI <--- " . $class);
+
+        $writer = $this->filer_->createSourceFile($cgi->getShortName()."Impl.inc");
+        $content = <<<EOF
+<?php
+
+class {$cgi->getShortName()}Impl {
+}
+EOF;
+
+        $writer->write($content);
+      }
+    }
+  }
+
+  function init(Logger $logger, PhpFiler $filer
+    , Config $config, string $projectRootDir, bool $isBuild): void {
+
+    $this->logger_ = $logger;
+    $this->filer_ = $filer;
+  }
+}

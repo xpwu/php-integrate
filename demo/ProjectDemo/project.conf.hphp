@@ -14,9 +14,9 @@ $src = ['src/**/*.inc'];
 $exclude_src = [];
 
 $anno_and_dep_repo = "repo";
-//
-//$annotation_processors = [];
-//
+
+$annotation_processors = ['ProcessorDemo:0.0'];
+
 $dependencies = ['PublishDemo:0.0'];
 
 //$publish = [
