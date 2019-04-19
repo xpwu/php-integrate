@@ -12,4 +12,5 @@ namespace Inte;
 interface RunTime {
   public function getPharDir():string ;
   public function getPharBaseName():string ;
+  public function getAllClassesOfSelf():array ;
 }

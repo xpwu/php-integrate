@@ -138,10 +138,27 @@ class SourceParser {
         . implode(',', array_keys($diffConst)));
     }
 
+    $selfClasses = RunTimeEnv::getInstance()
+      ->getRunTime()->getAllClassesOfSelf();
+
+    /**
+     * 在集成依赖集成工具提供的lib的工程时，可能在解析一个工程的文件后，lib中的类
+     * 才加载进去，此时求差后，类名数组中存在lib中的类名，但是文件名却是工程中的文件，
+     * 类与文件不对应，需要排除掉。
+     */
+
     foreach ($diffClass as $className) {
+      // 集成工具去集成其他工程时，要去掉集成工具自己的类
+      if (array_key_exists($className, $selfClasses)) {
+        continue;
+      }
       $this->result_[$className] = $file;
     }
     foreach ($diffInterface as $inter) {
+      // 集成工具去集成其他工程时，要去掉集成工具自己的类
+      if (array_key_exists($inter, $selfClasses)) {
+        continue;
+      }
       $this->result_[$inter] = $file;
     }
 

@@ -10,6 +10,7 @@ class ClassLoader {
   public const AllClasses = [
     
 		"Inte\Annotation\AbstractAnnotationServer" => "Annotation/AbstractAnnotationServer.inc",
+		"Inte\Annotation" => "Annotation/Annotation.inc",
 		"Inte\Annotation\BuildConfig" => "Annotation/BuildConfig.inc",
 		"Inte\Annotation\Config" => "Annotation/Config.inc",
 		"Inte\Annotation\Logger" => "Annotation/Logger.inc",

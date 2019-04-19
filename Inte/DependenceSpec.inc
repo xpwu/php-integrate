@@ -39,7 +39,9 @@ class DependenceSpec {
     $annServer = "";
     if (count($annotationServer) != 0) {
       $annServer = "\$annotationServer = ["
-        . implode(",", $annotationServer) . "];";
+        . implode(",", array_map(function (string $value){
+          return '"' . $value . '"';
+        }, $annotationServer)) . "];";
     }
 
     $content = <<<EOF

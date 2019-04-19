@@ -20,6 +20,7 @@ class RunTimeEnv {
   }
 
   private function __construct() {
+    $this->runTime_ = new NoRunTime();
   }
 
   public function getRunTime():RunTime {

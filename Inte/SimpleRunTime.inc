@@ -11,9 +11,10 @@ namespace Inte;
 
 class SimpleRunTime implements RunTime {
 
-  function __construct(string $pharDir, string $pharName) {
+  function __construct(string $pharDir, string $pharName, array $allClasses) {
     $this->pharDir_ = $pharDir;
     $this->pharName_ = $pharName;
+    $this->allClasses_ = $allClasses;
   }
 
   public function getPharDir():string {
@@ -22,6 +23,10 @@ class SimpleRunTime implements RunTime {
 
   public function getPharBaseName():string {
     return $this->pharName_;
+  }
+
+  public function getAllClassesOfSelf(): array {
+    return $this->allClasses_;
   }
 
 //  public function setPharDir(string $dir) {
@@ -34,5 +39,6 @@ class SimpleRunTime implements RunTime {
 
   private $pharDir_;
   private $pharName_;
+  private $allClasses_;
 
 }
