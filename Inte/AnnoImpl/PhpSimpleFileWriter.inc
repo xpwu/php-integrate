@@ -37,7 +37,10 @@ class PhpSimpleFileWriter implements PhpFileWriter {
       throw new \Exception($this->outputDir_
         . DIRECTORY_SEPARATOR . $this->fileName_ . " has existed!");
     }
-    fwrite($fd, $content);
+    if(!fwrite($fd, $content)){
+      throw new \Exception($this->outputDir_
+        . DIRECTORY_SEPARATOR . $this->fileName_ . " write error!");
+    }
     fclose($fd);
 
     $this->hasWritten_ = true;
