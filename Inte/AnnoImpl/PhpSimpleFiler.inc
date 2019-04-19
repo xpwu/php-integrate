@@ -21,7 +21,12 @@ class PhpSimpleFiler implements PhpFiler {
   }
 
   public function createSourceFile(string $fileDirAndName):PhpFileWriter {
-    return new PhpSimpleFileWriter($this->outputDir_, $fileDirAndName, $this);
+    if (!array_key_exists($fileDirAndName, $this->writersMap_)) {
+      $this->writersMap_[$fileDirAndName]
+        = new PhpSimpleFileWriter($this->outputDir_, $fileDirAndName, $this);
+    }
+
+    return $this->writersMap_[$fileDirAndName];
   }
 
   /**
@@ -44,4 +49,6 @@ class PhpSimpleFiler implements PhpFiler {
   private $outputDir_;
 
   private $allNewFile_ = [];
+
+  private $writersMap_ = [];
 }
