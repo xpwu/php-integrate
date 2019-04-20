@@ -52,8 +52,6 @@ class AnnotationCompiler {
 
     $depBySelf = [];
     foreach ($this->processors_ as $annotationProcessor) {
-      $this->dependenceProcessor_->appendDependence(
-        $annotationProcessor->getDependencies());
       $depBySelf[] = $annotationProcessor->convertToDependence();
     }
 
