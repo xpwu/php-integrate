@@ -20,9 +20,6 @@ namespace Inte;
 class InteBuilder {
 
   private const preRequire = [
-    "RunTime/RunTime.inc",
-    "RunTime/RunTimeEnv.inc",
-    "NoRunTime.inc",
     "SourceParser.inc",
     "FileFinder.inc",
     "ClassLoader.inc"
