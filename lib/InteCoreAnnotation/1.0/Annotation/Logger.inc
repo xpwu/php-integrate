@@ -10,7 +10,7 @@ namespace Inte\Annotation;
 
 
 interface Logger {
-  public function error(string $msg):void ;
+  public function throwError(string $msg):void ;
 
   public function warn(string $msg):void ;
 

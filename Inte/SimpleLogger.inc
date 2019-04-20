@@ -14,7 +14,7 @@ use Inte\Error\NormalError;
 
 class SimpleLogger implements Logger {
 
-  public function error(string $msg):void {
+  public function throwError(string $msg):void {
 //    echo "ERROR: " . $msg . PHP_EOL;
     throw new NormalError($msg);
   }
