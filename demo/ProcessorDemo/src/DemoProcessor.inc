@@ -43,6 +43,8 @@ EOF;
         $writer->write($content);
       }
     }
+
+    $this->logger_->info("test processor dependency: " . \ClassC::class);
   }
 
   function init(Logger $logger, PhpFiler $filer
