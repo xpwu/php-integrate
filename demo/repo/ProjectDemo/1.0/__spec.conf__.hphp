@@ -1,0 +1,8 @@
+<?php
+
+$name = "ProjectDemo";
+$version = "1.0";
+
+$dependencies = ["PublishDemo:0.0"];
+
+

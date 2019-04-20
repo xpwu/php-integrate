@@ -19,12 +19,11 @@ $annotation_processors = ['ProcessorDemo:0.0'];
 
 $dependencies = ['PublishDemo:0.0'];
 
-//$publish = [
-//  'repo'=> "",
-//  'name'=> "",
-//  'version'=>"",
-//  'annotation_services' => []
-//];
+$publish = [
+  'repo'=> "repo",
+  'name'=> "ProjectDemo",
+  'version'=>"1.0"
+];
 
 $build = [
   'target' => "demo",

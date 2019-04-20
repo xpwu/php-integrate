@@ -21,10 +21,15 @@ class DemoProcessor extends AbstractAnnotationServer {
    */
   private $filer_;
 
+  private $isBuild_;
+
   /**
    * @param string[] $classes
    */
   function process(array $classes): void {
+    if (!$this->isBuild_) {
+      return;
+    }
     foreach ($classes as $class) {
       $this->logger_->info($class);
       $cgi = new \ReflectionClass($class);
@@ -52,5 +57,6 @@ EOF;
 
     $this->logger_ = $logger;
     $this->filer_ = $filer;
+    $this->isBuild_ = $isBuild;
   }
 }
