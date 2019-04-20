@@ -174,6 +174,7 @@ class DependenceProcessor {
 
   public function printDependencies(string $prefix) {
     foreach ($this->dependencies_ as $dependence) {
+      echo $prefix . PHP_EOL;
       $this->printDeepFirstly($prefix, $dependence);
     }
   }
@@ -184,8 +185,21 @@ class DependenceProcessor {
       . " -> " . $this->mergedNameDependenceMap_[$dependence->getName()]->getVersion()
       . PHP_EOL;
 
-    foreach ($dependence->getSubDependencies() as $subDependency) {
-      $this->printDeepFirstly($prefix . "  |", $subDependency);
+    $subDependencies = $dependence->getSubDependencies();
+    $count = count($subDependencies);
+    $index = 0;
+
+    foreach ($subDependencies as $subDependency) {
+      // 最后一个子依赖时，应该把父依赖的prefix的最后一个 "|" 换成 " "
+      $index++;
+      if ($index === $count) {
+        $i = strrpos($prefix, "|");
+        if ($i !== false) {
+          $prefix[$i] = " ";
+        }
+      }
+
+      $this->printDeepFirstly($prefix  . "   |", $subDependency);
     }
   }
 
