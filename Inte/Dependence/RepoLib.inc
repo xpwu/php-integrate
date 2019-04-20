@@ -33,4 +33,9 @@ class RepoLib extends Position {
 
     return false;
   }
+
+  function getAbsoluteTopDir(): string {
+    return Project::getInstance()->getRootDir()
+      . DIRECTORY_SEPARATOR . $this->getTopDir();
+  }
 }

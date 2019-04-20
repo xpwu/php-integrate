@@ -20,6 +20,8 @@ abstract class Position {
 
   abstract function getTopDir():string ;
 
+  abstract function getAbsoluteTopDir():string ;
+
   protected function getRelativePathOfRepo():string {
     return $this->name_ . DIRECTORY_SEPARATOR . $this->version_;
   }

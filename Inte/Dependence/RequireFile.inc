@@ -43,6 +43,9 @@ class RequireFile extends Content {
   }
 
   function getRequireFiles(): array {
+    if (count($this->globFiles_) == 0) {
+      return [];
+    }
     return $this->getFilesByFilter($this->globFiles_);
   }
 

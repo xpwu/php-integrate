@@ -42,7 +42,7 @@ abstract class Content {
   }
 
   protected function getFilesByFilter(array $include, array $exclude=[]):array {
-    $fileFinder = new FileFinder($this->getPosition()->getTopDir()
+    $fileFinder = new FileFinder($this->getPosition()->getAbsoluteTopDir()
       , $include, $exclude);
 
     return array_map(function ($file){
