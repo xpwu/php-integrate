@@ -173,33 +173,60 @@ class DependenceProcessor {
   }
 
   public function printDependencies(string $prefix) {
+    $count = count($this->dependencies_);
+    $index = 0;
+
+    $last = false;
     foreach ($this->dependencies_ as $dependence) {
-      echo $prefix . PHP_EOL;
-      $this->printDeepFirstly($prefix, $dependence);
+      // 最后一个子依赖时，应该把父依赖的prefix的最后一个 "|" 换成 " "
+      $index++;
+      if ($index === $count) {
+        $last = true;
+      }
+
+      $this->printDeepFirstly($prefix, $dependence, $last);
     }
   }
 
-  private function printDeepFirstly(string $prefix, Dependence $dependence) {
+  private function printDeepFirstly(string $prefix
+    , Dependence $dependence, bool $lastOne) {
+
     echo $prefix . "--"
       . $dependence->getName() . ':' . $dependence->getVersion()
       . " -> " . $this->mergedNameDependenceMap_[$dependence->getName()]->getVersion()
       . PHP_EOL;
 
+    // 最后一个子依赖时，应该把父依赖的prefix的最后一个 "|" 换成 " "
+    if ($lastOne) {
+      $i = strrpos($prefix, "|");
+      if ($i !== false) {
+        $prefix[$i] = " ";
+      }
+    }
+
     $subDependencies = $dependence->getSubDependencies();
     $count = count($subDependencies);
     $index = 0;
 
+    $last = false;
     foreach ($subDependencies as $subDependency) {
-      // 最后一个子依赖时，应该把父依赖的prefix的最后一个 "|" 换成 " "
+
       $index++;
       if ($index === $count) {
-        $i = strrpos($prefix, "|");
-        if ($i !== false) {
-          $prefix[$i] = " ";
-        }
+        $last = true;
       }
 
-      $this->printDeepFirstly($prefix  . "   |", $subDependency);
+      $this->printDeepFirstly($prefix  . "   |", $subDependency, $last);
+    }
+
+    // 子块结束时，也就是要继续输出上一级时，输出一个空行。
+    // 具体就是自己有子块并打印结束，同时自己不是上一级的最后一个子块,
+    // 此时会打印与我同级的下一条，归纳起来就是从打印自己的子块到打印自己
+    // 的兄弟块过渡，相对于子块就是要输出上一级了，所以输出空行。
+    // 如果是上一级的最后一个子块，不清楚后面是否还要输出，也就是不清楚是否会有上一级
+    // 所以不输出空行
+    if ($count !== 0 && !$lastOne) {
+      echo $prefix . PHP_EOL;
     }
   }
 
