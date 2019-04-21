@@ -95,9 +95,6 @@ class InteBuilder {
   Inte\RunTime::default()->setPharDir(__DIR__);
   Inte\RunTime::default()->setPharName(basename(__FILE__));
   Inte\RunTime::default()->setAllClassFileMapOfSelf(${classLoaderArrayStr});
-    
-  //Inte\RunTimeEnv::getInstance()->setRunTime(
-  //  new Inte\SimpleRunTime(__DIR__, __FILE__, ${classLoaderArrayStr}));
   
   $indexClass::main();
   

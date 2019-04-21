@@ -112,14 +112,6 @@ $env<?php
   Inte\RunTime::default()->setPharName(basename(__FILE__));
   Inte\RunTime::default()->setAllClassFileMapOfSelf(${classLoaderArrayStr});
   
-  
-  // 用户的业务代码中不一定依赖了RunTime 可能不存在此类
-  //if (class_exists('Inte\RunTimeEnv')) {
-  //  Inte\RunTimeEnv::getInstance()->setRunTime(
-  //    new Inte\SimpleRunTime(__DIR__, basename(__FILE__)
-  //    , ${classLoaderArrayStr}));
-  //}
-  
   $indexClass::main();
   __HALT_COMPILER(); ?>
 EOF;
