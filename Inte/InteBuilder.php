@@ -20,6 +20,7 @@ namespace Inte;
 class InteBuilder {
 
   private const preRequire = [
+    "RunTimeTemplate.inc",
     "SourceParser.inc",
     "FileFinder.inc",
     "ClassLoader.inc"
@@ -48,13 +49,15 @@ class InteBuilder {
   private function firstInte(ClassLoader $classLoader) {
 
     $finder = new FileFinder("."
-      , ["**/*.inc", "*.inc"], [$classLoader->getFile()]);
+      , ["**/*.inc", "*.inc"], [$classLoader->getFile()
+        , RunTimeTemplate::getRunTimeFileName()]);
     $allFiles = $finder->getAllFile();
 
     $parser = new SourceParser($allFiles, true);
     $parser->parse();
     $result = $parser->getResult();
 
+    // 如果存在没有解析的，打印解析错误
     $left = $parser->getNotParseFile();
     foreach ($left as $item) {
       require_once $item;
@@ -70,12 +73,15 @@ class InteBuilder {
     $classLoaderArrayStr = $classLoader->getArrayVarString();
     $req = $classLoader->getFile();
 
+    $runTime = RunTimeTemplate::getRunTimeFileName();
+
     $content = <<<EOF
 <?php
 
   set_include_path('__FILE__'. PATH_SEPARATOR . get_include_path());
 
   require_once "${req}";
+  require_once "${runTime}";
 
   spl_autoload_register( function(\$className) {
       if (array_key_exists(\$className, $classLoaderArrayStr)) {
@@ -86,15 +92,20 @@ class InteBuilder {
       return false;
     });
     
-  Inte\RunTimeEnv::getInstance()->setRunTime(
-    new Inte\SimpleRunTime(__DIR__, __FILE__, ${classLoaderArrayStr}));
+  Inte\RunTime::default()->setPharDir(__DIR__);
+  Inte\RunTime::default()->setPharName(basename(__FILE__));
+  Inte\RunTime::default()->setAllClassFileMapOfSelf(${classLoaderArrayStr});
+    
+  //Inte\RunTimeEnv::getInstance()->setRunTime(
+  //  new Inte\SimpleRunTime(__DIR__, __FILE__, ${classLoaderArrayStr}));
   
   $indexClass::main();
   
 EOF;
 
     file_put_contents("debugStub.php", $content);
-
+    file_put_contents(RunTimeTemplate::getRunTimeFileName()
+      , RunTimeTemplate::getContent());
   }
 
   private function getCoreLibClass(ClassLoader $loader, array $srcDir):array {
@@ -124,6 +135,8 @@ EOF;
     $builder = new InteBuilder();
     $builder->prepare();
 
+    RunTimeTemplate::inteSelf();
+
     $classLoader = new ClassLoader(".", ".", "__Inte__");
 
     $builder->firstInte($classLoader);
@@ -140,13 +153,13 @@ EOF;
     $builder->writeStubForDebug($classLoader, Main::class);
 
     $libCoreFile = $builder->getCoreLibClass($classLoader
-      , ['Annotation']);
+      , ['Annotation/']);
     $publishWriter = new PublishWriter(".", "../lib"
       , "InteCoreAnnotation", Version::str);
     $publishWriter->write($libCoreFile);
 
     $libCoreFile = $builder->getCoreLibClass($classLoader
-      , ['RunTime']);
+      , ['RunTime/']);
     $publishWriter = new PublishWriter(".", "../lib"
       , "InteCore", Version::str);
     $publishWriter->write($libCoreFile);

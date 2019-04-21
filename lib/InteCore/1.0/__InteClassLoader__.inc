@@ -10,6 +10,5 @@ class ClassLoader {
   public const AllClasses = [
     
 		"Inte\RunTime" => "RunTime/RunTime.inc",
-		"Inte\RunTimeEnv" => "RunTime/RunTimeEnv.inc",
   ];
 }

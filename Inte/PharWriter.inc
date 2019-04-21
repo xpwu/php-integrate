@@ -14,7 +14,7 @@ use Phar;
 use ReflectionClass;
 
 class PharWriter {
-  function __construct(string $fullName, bool $isExe = false) {
+  function __construct(string $fullName) {
     if (!Phar::canWrite()) {
       throw new NormalError("phar can not write!");
     }
@@ -44,6 +44,10 @@ class PharWriter {
         . DIRECTORY_SEPARATOR . $file);
     }
 
+    // runTime 必须打包
+    $this->ph_[RunTimeTemplate::getRunTimeFileName()]
+      = RunTimeTemplate::getContent();
+
     $this->ph_->stopBuffering();
   }
 
@@ -68,13 +72,15 @@ class PharWriter {
     if (!in_array($classLoader->getFile(), $requireFiles, true)) {
       $requireFiles[] = $classLoader->getFile();
     }
+    // RunTime 必须提前require
+    $requireFiles[] = RunTimeTemplate::getRunTimeFileName();
 
     $req = "";
     foreach ($requireFiles as $requireFile) {
       if (substr($requireFile, 0, 2) === './') {
         $requireFile = substr($requireFile, 2);
       }
-      $req = $req . "require_once \"$requireFile\";".PHP_EOL;
+      $req = $req . "require_once \"$requireFile\";".PHP_EOL . "\t";
     }
 
     $env = $this->getEnv();
@@ -101,12 +107,18 @@ $env<?php
       return false;
     });
     
+  
+  Inte\RunTime::default()->setPharDir(__DIR__);
+  Inte\RunTime::default()->setPharName(basename(__FILE__));
+  Inte\RunTime::default()->setAllClassFileMapOfSelf(${classLoaderArrayStr});
+  
+  
   // 用户的业务代码中不一定依赖了RunTime 可能不存在此类
-  if (class_exists('Inte\RunTimeEnv')) {
-    Inte\RunTimeEnv::getInstance()->setRunTime(
-      new Inte\SimpleRunTime(__DIR__, basename(__FILE__)
-      , ${classLoaderArrayStr}));
-  }
+  //if (class_exists('Inte\RunTimeEnv')) {
+  //  Inte\RunTimeEnv::getInstance()->setRunTime(
+  //    new Inte\SimpleRunTime(__DIR__, basename(__FILE__)
+  //    , ${classLoaderArrayStr}));
+  //}
   
   $indexClass::main();
   __HALT_COMPILER(); ?>
