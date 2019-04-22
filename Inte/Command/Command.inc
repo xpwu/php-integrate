@@ -11,7 +11,6 @@
 namespace Inte;
 
 use Inte\Annotation\AnnoCompilerStrategyOfCompileDependence;
-use Inte\Annotation\AnnoCompilerStrategyOfNotCompileDependency;
 use Inte\Annotation\AnnotationCompilerStrategyOfDependency;
 use Inte\Config\Config;
 use Inte\Error\NormalError;
