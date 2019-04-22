@@ -38,4 +38,8 @@ class RepoLib extends Position {
     return Project::getInstance()->getRootDir()
       . DIRECTORY_SEPARATOR . $this->getTopDir();
   }
+
+  function getRootDir(): string {
+    return Project::getInstance()->getRootDir();
+  }
 }

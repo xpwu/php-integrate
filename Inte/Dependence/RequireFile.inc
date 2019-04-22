@@ -57,9 +57,9 @@ class RequireFile extends Content {
   }
 
   function getAllNeedFilesForInte(): array {
-    $fileFinder = new FileFinder($this->getPosition()->getTopDir()
+    $fileFinder = new FileFinder($this->getPosition()->getAbsoluteTopDir()
       , FileSystem::preGlobArray(['**/*']
-        , FileSystem::dirDeep(Project::getInstance()->getRootDir())));
+        , FileSystem::dirDeep($this->getPosition()->getAbsoluteTopDir())));
 
     return array_map(function ($file){
       return $this->getPosition()->getTopDir(). DIRECTORY_SEPARATOR . $file;

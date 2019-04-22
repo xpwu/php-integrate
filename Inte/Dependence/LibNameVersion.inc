@@ -11,14 +11,14 @@ namespace Inte\Dependence;
 
 use Inte\ClassLoader;
 use Inte\DependenceSpec;
-use Inte\Project;
+
 
 class LibNameVersion extends Content {
 
   function __construct(Position $position, bool $isAnno = false) {
     parent::__construct($position);
 
-    $this->rootDir_ = Project::getInstance()->getRootDir();
+    $this->rootDir_ = $this->getPosition()->getRootDir();
     // check
     if (!$isAnno) {
       $spec = new DependenceSpec($this->rootDir_, $this->getPosition()->getTopDir());

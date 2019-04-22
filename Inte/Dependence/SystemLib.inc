@@ -23,10 +23,15 @@ class SystemLib extends Position {
   }
 
   function getAbsoluteTopDir(): string {
+    return $this->getRootDir() . DIRECTORY_SEPARATOR . $this->getTopDir();
+  }
+
+  function getRootDir(): string {
     $includePathStr = get_include_path();
     $includePaths = explode(':', $includePathStr);
     $actual = [];
 
+    // phar:// 协议的路径会被错误的分割，所以需要特殊处理
     $pwd = getcwd();
     $last = "";
     foreach ($includePaths as $includePath) {
@@ -42,7 +47,7 @@ class SystemLib extends Position {
 
       $absolute = $includePath . DIRECTORY_SEPARATOR . $this->getTopDir();
       if (file_exists($absolute)) {
-        return $absolute;
+        return $includePath;
       }
     }
 

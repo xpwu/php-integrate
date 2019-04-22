@@ -16,6 +16,8 @@ abstract class Position {
     $this->version_ = $version;
   }
 
+  abstract function getRootDir():string ;
+
   abstract function getAllNeedFilesForInte(Content $content):array ;
 
   abstract function getTopDir():string ;
