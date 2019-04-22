@@ -25,36 +25,35 @@ class Build extends Command {
 
     $this->printStep("build phar");
 
-    /**
-     * 1、生成整体的classLoader 包括dependence的
-     * 2、加入所有的文件，包括dependence的
-     * 3、生成stub文件  设置include 还有各个依赖的repo路径也需要包括在include中
-     * 4、写phar  加入 index
-     */
+
     $project = Project::getInstance();
     $this->processor_ = $processor;
+    $this->projectClassFileMap_ = $classMap;
 
-    // 准备 classFileMap
-    $this->classFileMap_ = $classMap;
-    /**
-     * @var $value Dependence
-     */
-    foreach ($this->processor_->getMergeResult() as $value) {
-      $this->classFileMap_ = array_merge($this->classFileMap_
-        , $value->getClasses());
-    }
-    $this->classFileMap_ = array_map(function ($value){
-      if (substr($value, 0, 2) === './') {
-        return substr($value, 2);
-      }
-      return $value;
-    }, $this->classFileMap_);
 
-    $classLoader = new ClassLoader($project->getRootDir(), $project->getBuildOutputDir());
-    $classLoader->write($this->classFileMap_);
+    $classLoader = new ClassLoader($project->getRootDir()
+      , $project->getBuildOutputDir());
+    $classLoader->write($this->getAllClassMapForClassLoader());
 
+
+    // 写入phar
+    $pharPath = $project->getConfig()->buildConfig->getTarget();
+    @mkdir(dirname($pharPath), 0777, true);
+
+    $phWriter = new PharWriter($pharPath);
+    $phWriter->write($this->getAllFiles(), $classLoader);
+    $phWriter->setStub($classLoader
+      , $project->getConfig()->buildConfig->getIndexClass()
+      , $this->getAllRequireFiles());
+
+  }
+
+  protected function isBuild(): bool {
+    return true;
+  }
+
+  private function getAllRequireFiles():array {
     // 准备requireFiles
-
     $requireFiles = [];
     /**
      * @var $value Dependence
@@ -63,27 +62,27 @@ class Build extends Command {
       $requireFiles = array_merge($requireFiles, $value->getRequireFiles());
     }
 
-    // 写入phar
-
-    $pharPath = $project->getConfig()->buildConfig->getTarget();
-    @mkdir(dirname($pharPath), 0777, true);
-
-    $phWriter = new PharWriter($pharPath);
-    $phWriter->write($this->getAllFiles(), $classLoader);
-    $phWriter->setStub($classLoader
-      , $project->getConfig()->buildConfig->getIndexClass()
-      , $requireFiles);
-
+    return $requireFiles;
   }
 
-//  protected function getAnnoCompilerStrategyOfDependency()
-//    : AnnotationCompilerStrategyOfDependency {
-//
-//    return new ();
-//  }
+  private function getAllClassMapForClassLoader():array {
+    // 准备 classFileMap for ClassLoader
+    /**
+     * @var $value Dependence
+     */
+    $classMapForClassLoader = $this->projectClassFileMap_;
+    foreach ($this->processor_->getMergeResult() as $value) {
+      $classMapForClassLoader = array_merge($classMapForClassLoader
+        , $value->getClasses());
+    }
+    $classMapForClassLoader = array_map(function ($value){
+      if (substr($value, 0, 2) === './') {
+        return substr($value, 2);
+      }
+      return $value;
+    }, $classMapForClassLoader);
 
-  protected function isBuild(): bool {
-    return true;
+    return $classMapForClassLoader;
   }
 
   private function getAllFiles():array {
@@ -95,13 +94,13 @@ class Build extends Command {
     foreach ($this->processor_->getMergeResult() as $value) {
       $files = array_merge($files, $value->getAllFiles());
     }
-    $files = array_merge($files, array_values($this->classFileMap_));
+    $files = array_merge($files, array_values($this->projectClassFileMap_));
 
     return $files;
   }
 
 
-  private $classFileMap_;
+  private $projectClassFileMap_;
   /**
    * @var DependenceProcessor
    */
