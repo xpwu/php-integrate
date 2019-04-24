@@ -31,7 +31,8 @@ class RequireFile extends Content {
       }
 
       $classFile = explode("@", $value);
-      $this->classFileMap_[$classFile[0]] = $classFile[1];
+      $this->classFileMap_[$classFile[0]]
+        = $this->getPosition()->getTopDir() .DIRECTORY_SEPARATOR. $classFile[1];
     }
   }
 
