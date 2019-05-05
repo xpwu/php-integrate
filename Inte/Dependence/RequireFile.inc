@@ -47,7 +47,9 @@ class RequireFile extends Content {
     if (count($this->globFiles_) == 0) {
       return [];
     }
-    return $this->getFilesByFilter($this->globFiles_);
+
+    return $this->getFilesByFilter(FileSystem::preGlobArray($this->globFiles_
+      , FileSystem::dirDeep($this->getPosition()->getAbsoluteTopDir())));
   }
 
   /**

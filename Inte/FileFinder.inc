@@ -48,9 +48,17 @@ class FileFinder {
 
     $excludeFiles = array_unique($excludeFiles);
 
+    $filesOrg = array_diff($allFiles, $excludeFiles);
+    $files = [];
+    foreach ($filesOrg as $item) {
+      if (is_file($this->topDir_. DIRECTORY_SEPARATOR . $item)) {
+        $files[] = $item;
+      }
+    }
+
     chdir($pwd);
 
-    return array_values(array_diff($allFiles, $excludeFiles));
+    return array_values($files);
   }
 
   private $patterns_;
