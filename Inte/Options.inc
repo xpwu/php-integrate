@@ -14,6 +14,7 @@ namespace Inte;
 use Inte\Command\Build;
 use Inte\Command\PrintAllProjectFiles;
 use Inte\Command\PrintDependence;
+use Inte\Command\ProcessAnnotation;
 use Inte\Command\Publish;
 use Inte\Error\NormalError;
 use Inte\Error\OK;
@@ -31,15 +32,16 @@ Usage:  option
           -l the same to '--command printFiles';
           -d the same to '--command printDependence';
           -p the same to '--command publish';
+          -a the same to '--command processAnnotation';
           
-          --command: 'build', 'publish', 'printFiles', 'printDependence'
+          --command: 'build', 'publish', 'printFiles', 'printDependence', 'processAnnotation'
                 default is 'build'
 
 EOF;
 
 
   function __construct() {
-    $option = getopt('ldrhvwpc:', ['command:'], $optind);
+    $option = getopt('ldarhvwpc:', ['command:'], $optind);
 
     $argv = $_SERVER['argv'];
     $pos_args = array_slice($argv, $optind);
@@ -89,6 +91,10 @@ EOF;
       $option['command'] = 'publish';
     }
 
+    if (array_key_exists('a', $option)) {
+      $option['command'] = 'processAnnotation';
+    }
+
     $this->findRootDir();
 
     if (array_key_exists('r', $option)) {
@@ -99,7 +105,9 @@ EOF;
     $commands = ["build"=>Build::class
       , 'publish'=>Publish::class
       , 'printFiles'=>PrintAllProjectFiles::class
-      , 'printDependence'=>PrintDependence::class];
+      , 'printDependence'=>PrintDependence::class
+      , 'processAnnotation'=>ProcessAnnotation::class
+    ];
 
     if (!array_key_exists('command', $option)) {
       $this->command_ = new $commands['build']();
