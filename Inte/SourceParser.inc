@@ -147,6 +147,9 @@ class SourceParser {
      * 这里采用反射通过类查找对应的文件名，如果查找的文件名最后部分与include的文件名一致，
      * 才认为此类在此文件中定义，是一个新搜索到的类。
      *
+     *
+     * 排除匿名类
+     *
      */
 
     $diffClassAndInterface = array_merge($diffClass, $diffInterface);
@@ -154,6 +157,9 @@ class SourceParser {
       try {
         $clazz = new \ReflectionClass($className);
         if (strrpos($clazz->getFileName(), $file) === false) {
+          continue;
+        }
+        if ($clazz->isAnonymous()) {
           continue;
         }
       } catch (\ReflectionException $e) {
