@@ -105,8 +105,20 @@ abstract class Command {
 
     $sequenceFilesByCompiler
       = $compiler->compile($allProjectFiles, $this->isBuild());
-    $this->postProcessAnnotation(array_values(array_diff($sequenceFilesByCompiler
-      , $allProjectFiles)));
+
+    $newFilesInteOrPublish = array_values(array_diff($sequenceFilesByCompiler
+      , $allProjectFiles));
+
+    $annotationDir = Project::getInstance()->getAnnotationOutputDir();
+    $annotationDir .= DIRECTORY_SEPARATOR . 'src';
+    $rootDir = Project::getInstance()->getRootDir();
+
+    $fileDirs = FileSystem::preGlob($annotationDir.'/**/*'
+      , FileSystem::dirDeep($rootDir . '/' . $annotationDir));
+    $files = (new FileFinder($rootDir, $fileDirs))->getAllFile();
+    $newFilesNonInteOrPublish = array_diff($files, $newFilesInteOrPublish, []);
+
+    $this->postProcessAnnotation($newFilesInteOrPublish, $newFilesNonInteOrPublish);
 
     return $sequenceFilesByCompiler;
   }
@@ -190,7 +202,30 @@ abstract class Command {
   protected function postFindFile(array $files):void {}
   protected function postParseDependence(DependenceProcessor $processor
     , AnnotationCompiler $compiler):void {}
-  protected function postProcessAnnotation(array $newFiles):void {}
+  protected function postProcessAnnotation(array $newFilesInteOrPublish
+    , array $newFilesNotInteOrPublish):void {
+
+    echo PHP_EOL;
+
+    echo "new Files for InteOrPublish: (sum="
+      . count($newFilesInteOrPublish) .")" . PHP_EOL;
+
+    foreach ($newFilesInteOrPublish as $newFile) {
+      echo $newFile . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+
+    echo "new Files for non-InteOrPublish: (sum="
+      . count($newFilesNotInteOrPublish) .")" . PHP_EOL;
+
+    foreach ($newFilesNotInteOrPublish as $newFile) {
+      echo $newFile . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+
+  }
   protected function postParseFile(array $classFileMap
     , DependenceProcessor $processor):void {}
 

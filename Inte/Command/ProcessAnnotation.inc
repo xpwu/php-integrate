@@ -6,16 +6,16 @@ namespace Inte\Command;
 
 use Inte\Command;
 use Inte\Error\OK;
+use Inte\FileFinder;
+use Inte\FileSystem;
+use Inte\Project;
 
 class ProcessAnnotation extends Command {
 
-  protected function postProcessAnnotation(array $newFiles): void {
+  protected function postProcessAnnotation(array $newFilesInteOrPublish
+    , array $newFilesNotInteOrPublish): void {
 
-    echo "new Files: (sum=". count($newFiles) .")" . PHP_EOL;
-
-    foreach ($newFiles as $newFile) {
-      echo $newFile . PHP_EOL;
-    }
+    parent::postProcessAnnotation($newFilesInteOrPublish, $newFilesNotInteOrPublish);
 
     throw new OK();
   }
