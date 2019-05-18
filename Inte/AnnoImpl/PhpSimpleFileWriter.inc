@@ -27,6 +27,10 @@ class PhpSimpleFileWriter implements PhpFileWriter {
    * @throws \Exception
    */
   function write(string $content) {
+    if ($this->addFile_) {
+      $this->filer_->applyWriteFile($this->fileName_);
+    }
+
     $dir = dirname($this->outputDir_ . DIRECTORY_SEPARATOR . $this->fileName_);
     @mkdir($dir, 0777, true);
 
@@ -53,6 +57,10 @@ class PhpSimpleFileWriter implements PhpFileWriter {
   // 防止用户编码错误  写了重复的文件名，所有重写时，必须是调用过write后才能执行
   // write 中 已经防止了重名的情况
   function rewrite(string $content) {
+    if ($this->addFile_) {
+      $this->filer_->applyWriteFile($this->fileName_);
+    }
+
     if (!$this->hasWritten_) {
       $this->write($content);
       return;

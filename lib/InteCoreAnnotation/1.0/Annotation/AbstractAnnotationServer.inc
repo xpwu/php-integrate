@@ -20,4 +20,6 @@ abstract class AbstractAnnotationServer {
   abstract function process(array $classes):void;
 
   public function processDependencyClasses(array $dependencyClasses):void {}
+
+  public function processOverSign():void {}
 }

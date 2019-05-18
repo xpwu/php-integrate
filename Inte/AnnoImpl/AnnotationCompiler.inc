@@ -132,7 +132,7 @@ class AnnotationCompiler {
 
     foreach ($serversStr as $item) {
 
-      $filer = new PhpSimpleFiler($this->distDir_);
+      $filer = new PhpSimpleFiler($this->distDir_, $item);
       $this->phpFilers_[] = $filer;
 
       /**
@@ -183,6 +183,14 @@ class AnnotationCompiler {
 
       // 输入与输出都为0时， 才停止编译
     }while(count($inputClasses) != 0 || count($outputFile) != 0);
+
+    // phpFilers_ 必须先指定processOver, 阻止写可能需要集成的文件
+    foreach ($this->phpFilers_ as $filer) {
+      $filer->processOver();
+    }
+    foreach ($this->servers_ as $server) {
+      $server->processOverSign();
+    }
 
     $parsedFileBySequence = array_merge($parsedFileBySequence, $allFiles);
 

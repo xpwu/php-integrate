@@ -9,11 +9,16 @@
 namespace Inte\Annotation;
 
 
+use Inte\Error\NormalError;
 use Inte\Project;
 
 class PhpSimpleFiler implements PhpFiler {
-  public function __construct(string $outputDir) {
+  public function __construct(string $outputDir, string $relatedToAnnoServer) {
     $this->outputDir_ = $outputDir;
+    $this->relatedToAnnoServer_ = $relatedToAnnoServer;
+
+    $this->applyWriteFileStrategy_ = function (string $file) {
+    };
   }
 
   public function modifyOutDirToRootDir(): void {
@@ -29,11 +34,26 @@ class PhpSimpleFiler implements PhpFiler {
     return $this->writersMap_[$fileDirAndName];
   }
 
+  public function applyWriteFile(string $file) {
+    ($this->applyWriteFileStrategy_)($file);
+  }
+
   /**
    * @param string $file  相对于$outputDir_ 的路径
    */
   public function addFile(string $file) {
     $this->allNewFile_[] = $file;
+  }
+
+  public function processOver() {
+    $this->applyWriteFileStrategy_ = function (string $file) {
+      throw new NormalError($this->relatedToAnnoServer_
+        . "ERROR, which will write $file. \n"
+        . "'processOver' do NOT write any file which will InteOrPublish. "
+        . "if you need write a non-InteOrPublish file, "
+        . "please use 'writer:dontInteOrPublish' "
+        . "to inform that is non-InteOrPublish");
+    };
   }
 
   /**
@@ -51,4 +71,8 @@ class PhpSimpleFiler implements PhpFiler {
   private $allNewFile_ = [];
 
   private $writersMap_ = [];
+
+  private $applyWriteFileStrategy_ = null;
+
+  private $relatedToAnnoServer_;
 }
