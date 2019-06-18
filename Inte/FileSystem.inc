@@ -113,4 +113,20 @@ class FileSystem {
     return $max + 1;
   }
 
+  static public function escape(string $path):string {
+    $pathArr = explode('/', $path);
+    $res = [];
+    foreach ($pathArr as $value) {
+      if ($value === '.') {
+        continue;
+      }
+      if ($value === '..') {
+        $value = '__';
+      }
+
+      $res[] = $value;
+    }
+
+    return implode('/', $res);
+  }
 }

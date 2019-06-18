@@ -38,7 +38,8 @@ class ClassLoader {
   public function write(array $classes) {
     $arr = "";
     foreach ($classes as $class=>$file) {
-      $arr = $arr . PHP_EOL . "\t\t\"" . $class . '" => "' . $file . "\",";
+      $file = FileSystem::escape($file);
+      $arr = $arr . PHP_EOL . "\t\t'" . $class . '\' => \'' . $file . "',";
     }
 
     $content = <<< EOF

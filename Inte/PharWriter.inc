@@ -36,11 +36,12 @@ class PharWriter {
     }
 
     foreach ($files as $file) {
-      if (substr($file, 0, 2) === './') {
-        $file = substr($file, 2);
-      }
+//      if (substr($file, 0, 2) === './') {
+//        $file = substr($file, 2);
+//      }
       // todo: 在自集成与集成其他包时 都要保证路径的正确. 后续需要更好的处理
-      $this->ph_[$file] = file_get_contents(Project::getInstance()->getRootDir()
+      $this->ph_[FileSystem::escape($file)]
+        = file_get_contents(Project::getInstance()->getRootDir()
         . DIRECTORY_SEPARATOR . $file);
     }
 
@@ -77,10 +78,12 @@ class PharWriter {
 
     $req = "";
     foreach ($requireFiles as $requireFile) {
-      if (substr($requireFile, 0, 2) === './') {
-        $requireFile = substr($requireFile, 2);
-      }
-      $req = $req . "require_once \"$requireFile\";".PHP_EOL . "\t";
+//      if (substr($requireFile, 0, 2) === './') {
+//        $requireFile = substr($requireFile, 2);
+//      }
+      $requireFile = FileSystem::escape($requireFile);
+
+      $req = $req . "require_once '$requireFile';".PHP_EOL . "\t";
     }
 
     $env = $this->getEnv();

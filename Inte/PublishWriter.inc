@@ -39,8 +39,9 @@ class PublishWriter {
       , $dependencies, $allServices);
 
     foreach ($classFileMap as $value) {
-      @mkdir(dirname($dir .DIRECTORY_SEPARATOR. $value), 0777, true);
-      copy($value, $dir .DIRECTORY_SEPARATOR. $value);
+      $dist = $dir .DIRECTORY_SEPARATOR. FileSystem::escape($value);
+      @mkdir(dirname($dist), 0777, true);
+      copy($value, $dist);
     }
 
     chdir($pwd);

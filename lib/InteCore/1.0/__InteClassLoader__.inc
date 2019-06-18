@@ -9,6 +9,6 @@ namespace InteCore;
 class ClassLoader {
   public const AllClasses = [
     
-		"Inte\RunTime" => "RunTime/RunTime.inc",
+		'Inte\RunTime' => 'RunTime/RunTime.inc',
   ];
 }

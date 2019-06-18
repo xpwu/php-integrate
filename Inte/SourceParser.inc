@@ -144,9 +144,10 @@ class SourceParser {
      * 而此类可能是其他依赖库提供或者集成工具提供，所以需要排除这些类，以免类与文件名不对应并且
      * 类的搜索也会错误。
      *
-     * 这里采用反射通过类查找对应的文件名，如果查找的文件名最后部分与include的文件名一致，
+     * 这里采用反射通过类查找对应的文件名，如果查找的文件名最后部分与realPath的文件名一致，
      * 才认为此类在此文件中定义，是一个新搜索到的类。
      *
+     * 这里要使用realpath 替换掉 .，..，symlink
      *
      * 排除匿名类
      *
@@ -156,7 +157,9 @@ class SourceParser {
     foreach ($diffClassAndInterface as $className) {
       try {
         $clazz = new \ReflectionClass($className);
-        if (strrpos($clazz->getFileName(), $file) === false) {
+        $clazzFile = $clazz->getFileName();
+        $realPath = realpath($file);
+        if ($clazzFile !== $realPath) {
           continue;
         }
         if ($clazz->isAnonymous()) {

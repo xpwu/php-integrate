@@ -15,6 +15,7 @@ use Inte\ClassLoader;
 use Inte\Command;
 use Inte\Dependence;
 use Inte\DependenceProcessor;
+use Inte\FileSystem;
 use Inte\PharWriter;
 use Inte\Project;
 
@@ -76,10 +77,7 @@ class Build extends Command {
         , $value->getClasses());
     }
     $classMapForClassLoader = array_map(function ($value){
-      if (substr($value, 0, 2) === './') {
-        return substr($value, 2);
-      }
-      return $value;
+      return FileSystem::escape($value);
     }, $classMapForClassLoader);
 
     return $classMapForClassLoader;
