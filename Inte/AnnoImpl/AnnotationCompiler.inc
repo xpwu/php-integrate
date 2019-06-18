@@ -128,7 +128,7 @@ class AnnotationCompiler {
       $serversStr = array_merge($serversStr
         , $annotationProcessor->getServersString());
     }
-    array_unique($serversStr);
+    $serversStr = array_unique($serversStr);
 
     foreach ($serversStr as $item) {
 

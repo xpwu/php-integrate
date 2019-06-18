@@ -21,9 +21,9 @@ class PhpSimpleFiler implements PhpFiler {
     };
   }
 
-  public function modifyOutDirToRootDir(): void {
-    $this->outputDir_ = Project::getInstance()->getRootDir();
-  }
+//  public function modifyOutDirToRootDir(): void {
+//    $this->outputDir_ = Project::getInstance()->getRootDir();
+//  }
 
   public function createSourceFile(string $fileDirAndName):PhpFileWriter {
     if (!array_key_exists($fileDirAndName, $this->writersMap_)) {

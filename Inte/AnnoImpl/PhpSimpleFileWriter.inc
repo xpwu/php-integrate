@@ -10,12 +10,25 @@ namespace Inte\Annotation;
 
 
 
+use Inte\Project;
+
 class PhpSimpleFileWriter implements PhpFileWriter {
 
   function __construct(string $outputDir, string $fileName, PhpSimpleFiler $filer) {
     $this->fileName_ = $fileName;
     $this->filer_ = $filer;
     $this->outputDir_ = $outputDir;
+    $this->defaultDir_ = $outputDir;
+  }
+
+  function modifyOutDirToRootDir():void {
+    $this->outputDir_ = Project::getInstance()->getRootDir();
+    $this->isRootDir_ = true;
+  }
+
+  function modifyOutDirToDefault():void {
+    $this->outputDir_ = $this->defaultDir_;
+    $this->isRootDir_ = false;
   }
 
   public function dontInteOrPublish() {
@@ -35,8 +48,14 @@ class PhpSimpleFileWriter implements PhpFileWriter {
     @mkdir($dir, 0777, true);
 
     // xb: 不能重名
-    $fd = fopen($this->outputDir_ . DIRECTORY_SEPARATOR .
-      $this->fileName_, "xb");
+    if ($this->isRootDir_) {
+      $fd = fopen($this->outputDir_ . DIRECTORY_SEPARATOR .
+        $this->fileName_, "wb");
+    } else {
+      $fd = fopen($this->outputDir_ . DIRECTORY_SEPARATOR .
+        $this->fileName_, "xb");
+    }
+
     if ($fd === false) {
       throw new \Exception($this->outputDir_
         . DIRECTORY_SEPARATOR . $this->fileName_ . " has existed!");
@@ -56,6 +75,10 @@ class PhpSimpleFileWriter implements PhpFileWriter {
 
   // 防止用户编码错误  写了重复的文件名，所有重写时，必须是调用过write后才能执行
   // write 中 已经防止了重名的情况
+  /**
+   * @param string $content
+   * @throws \Exception
+   */
   function rewrite(string $content) {
     if ($this->addFile_) {
       $this->filer_->applyWriteFile($this->fileName_);
@@ -72,7 +95,9 @@ class PhpSimpleFileWriter implements PhpFileWriter {
     fclose($fd);
   }
 
+  private $isRootDir_ = false;
   private $outputDir_;
+  private $defaultDir_;
   private $fileName_;
   private $filer_;
   private $hasWritten_ = false;

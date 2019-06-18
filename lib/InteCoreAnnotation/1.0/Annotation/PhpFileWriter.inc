@@ -10,6 +10,8 @@ namespace Inte\Annotation;
 
 
 interface PhpFileWriter {
+  function modifyOutDirToRootDir():void ;
+  function modifyOutDirToDefault():void ;
   function dontInteOrPublish();
   function write(string $content);
   function rewrite(string $content);
