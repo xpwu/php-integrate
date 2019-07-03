@@ -96,7 +96,7 @@ class AnnotationCompiler {
           $this->initInAnnotationEnvironment($isBuild);
           $this->compileInAnnotationEnvironment($files);
         }catch (NormalError $error) {
-          echo $error;
+          $this->printError($error);
           exit($error->getExitStatus());
         }
         exit(0);
@@ -115,6 +115,18 @@ class AnnotationCompiler {
     }
 
     return explode(";", $retFile);
+  }
+
+  private function printError(NormalError $error):void {
+    $debug = $error->getTrace();
+    $file = '...'.substr($debug[0]["file"], -100);
+    $line = $debug[0]["line"];
+    $debug1 = @$debug[1]??['class'=>"{main}", 'function'=>"{main}", 'type'=>" "];
+    $class = $debug1['class'];
+    $method = $debug1['function'];
+    $type = $debug1['type'];
+
+    echo "$file($line): ${class}${type}${method}() --- $error" . PHP_EOL;
   }
 
   private function initInAnnotationEnvironment(bool $isBuild) {
