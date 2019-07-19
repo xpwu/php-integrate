@@ -12,4 +12,5 @@ namespace Inte\Annotation;
 interface Config {
   function getBuildConfig():BuildConfig ;
   function getPublishConfig():PublishConfig;
+  function getAbsoluteConfigFileName():string ;
 }

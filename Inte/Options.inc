@@ -25,7 +25,7 @@ Usage:  option
   option: -h show this help;
           -c conf file name, default is project.conf.hphp.
               Find the dir automatically from the current dir to sys root dir('/').
-              The arg can have a absolute dir, ;
+              The arg can have a absolute dir or relative dir ;
           -v show version;
           -w show path;
           -r show project root dir;
@@ -69,14 +69,17 @@ EOF;
       throw new OK();
     }
 
+    $findRoot = "./";
     if (array_key_exists('c', $option)) {
-      if (strpos($option['c'], '/') == 0) {
-        $this->configFileName = basename($option['c']);
-        // 从这里开始查找 为后续rootDir 做准备
-        chdir(dirname($option['c']));
-      } else {
-        $this->configFileName = $option['c'];
-      }
+      $this->configFileName = basename($option['c']);
+      $findRoot = dirname($option['c']);
+//      if (strpos($option['c'], '/') == 0) {
+//        $this->configFileName = basename($option['c']);
+//        // 从这里开始查找 为后续rootDir 做准备
+//        chdir(dirname($option['c']));
+//      } else {
+//        $this->configFileName = $option['c'];
+//      }
     }
 
     if (array_key_exists('l', $option)) {
@@ -95,7 +98,7 @@ EOF;
       $option['command'] = 'processAnnotation';
     }
 
-    $this->findRootDir();
+    $this->findRootDir($findRoot);
 
     if (array_key_exists('r', $option)) {
       echo $this->rootDir.PHP_EOL;
@@ -135,8 +138,10 @@ EOF;
     return $this->configFileName;
   }
 
-  private function findRootDir() {
+  private function findRootDir(string $findRoot) {
     $pwdori = getcwd();
+
+    chdir($findRoot);
     $pwd = getcwd();
     while (!is_file($pwd.DIRECTORY_SEPARATOR.$this->configFileName)) {
       chdir('..');

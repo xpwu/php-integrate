@@ -14,6 +14,8 @@ use Inte\FileSystem;
 class Config implements \Inte\Annotation\Config {
   function __construct(string $confFile) {
     require_once $confFile;
+
+    $this->fileName_ = $confFile;
     $this->buildDir = $build_dir??"build";
     if ($this->buildDir == "") {
       $this->buildDir = "build";
@@ -70,11 +72,17 @@ class Config implements \Inte\Annotation\Config {
    */
   public $buildConfig = null;
 
+  private $fileName_;
+
   function getBuildConfig(): \Inte\Annotation\BuildConfig {
     return $this->buildConfig;
   }
 
   function getPublishConfig(): \Inte\Annotation\PublishConfig {
     return $this->publishConfig;
+  }
+
+  function getAbsoluteConfigFileName(): string {
+    return $this->fileName_;
   }
 }
