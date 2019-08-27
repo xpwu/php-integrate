@@ -77,7 +77,9 @@ abstract class Command {
     $annoDepProcessor->mergeDependencies();
 
     $dependenceProcessor->updateVersionByOther($annoDepProcessor);
+    $dependenceProcessor->checkDependenceClass();
     $annoDepProcessor->updateVersionByOther($dependenceProcessor);
+    $annoDepProcessor->checkDependenceClass();
 
     $allDependencyClasses = [];
     foreach ($dependenceProcessor->getMergeResult() as $dependence) {

@@ -10,5 +10,5 @@ namespace Inte;
 
 
 class Version {
-  public const str = "1.0";
+  public const str = "1.0.1";
 }

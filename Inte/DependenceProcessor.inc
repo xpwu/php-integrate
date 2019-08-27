@@ -43,7 +43,7 @@ class DependenceProcessor {
     $this->mergeDependencies();
   }
 
-  private function checkDependenceClass() {
+  public function checkDependenceClass() {
     $allClasses = [];
     /**
      * @var $dependency Dependence
@@ -101,7 +101,7 @@ class DependenceProcessor {
       $this->mergedNameDependenceMap_[$dependency->getName()] = $dependency;
     }
 
-    $this->checkDependenceClass();
+//    $this->checkDependenceClass();
   }
 
   private function postOrderTraversal(array &$allDependencies
@@ -133,18 +133,18 @@ class DependenceProcessor {
     $intersect = array_intersect_key($this->mergedNameDependenceMap_
       , $other->mergedNameDependenceMap_);
 
-    $reset = false;
+//    $reset = false;
     foreach ($intersect as $name => $dependence) {
       if (version_compare($this->mergedNameDependenceMap_[$name]->getVersion()
         , $other->mergedNameDependenceMap_[$name]->getVersion(), "<")) {
         $this->mergedNameDependenceMap_[$name] = $other->mergedNameDependenceMap_[$name];
-        $reset = true;
+//        $reset = true;
       }
     }
 
-    if ($reset) {
-      $this->checkDependenceClass();
-    }
+//    if ($reset) {
+//      $this->checkDependenceClass();
+//    }
   }
 
   public function loadDependencies() {
