@@ -66,7 +66,6 @@ abstract class Command {
       $this->config_->annoAndDepRepo
       , $this->config_->dependencies);
     $dependenceProcessor->mergeDependencies();
-    $dependenceProcessor->loadDependencies();
 
     $compiler = new AnnotationCompiler(
       $this->config_->annoAndDepRepo
@@ -78,6 +77,8 @@ abstract class Command {
 
     $dependenceProcessor->updateVersionByOther($annoDepProcessor);
     $dependenceProcessor->checkDependenceClass();
+    $dependenceProcessor->loadDependencies();
+
     $annoDepProcessor->updateVersionByOther($dependenceProcessor);
     $annoDepProcessor->checkDependenceClass();
 
